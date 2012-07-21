@@ -9,7 +9,6 @@ package team8;
  * @author sam
  */
 public class Dashboard extends javax.swing.JFrame {
-
     /**
      * Creates new form Dashboard
      */
