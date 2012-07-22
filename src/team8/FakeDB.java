@@ -91,6 +91,10 @@ public class FakeDB {
         clientList.put(nm, new Client(nm));
     }
     
+    public static void addClient(Client c) {
+        clientList.put(c.getName(),c);
+    }
+    
     /**
      * Returns sorted array
      * 

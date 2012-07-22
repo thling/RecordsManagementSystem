@@ -76,6 +76,7 @@ public class Dashboard extends javax.swing.JFrame {
             lstInd++;
         }
         
+        this.txtSearchClient.setText(null);
         this.lstClientList.setListData(names);
         this.lstClientList.repaint();
     }
@@ -92,7 +93,6 @@ public class Dashboard extends javax.swing.JFrame {
         if (filter == null) {
             filter = "";
         }
-        System.out.println(filter);
         
         // Document list
         ArrayList<DocumentPanel> panelsToAdd = new ArrayList<>();
@@ -132,7 +132,6 @@ public class Dashboard extends javax.swing.JFrame {
         
         this.pnlDocumentList.doLayout();
         this.scrpnlDocuments.doLayout();
-//        this.scrpnlDocuments.repaint();
     }
     
     /**
@@ -295,7 +294,7 @@ public class Dashboard extends javax.swing.JFrame {
             .addComponent(jSeparator2)
         );
 
-        pnlDocumentList.setBackground(new java.awt.Color(169, 169, 169));
+        pnlDocumentList.setBackground(new java.awt.Color(254, 254, 254));
         pnlDocumentList.setMinimumSize(new java.awt.Dimension(10, 100));
         pnlDocumentList.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -348,6 +347,11 @@ public class Dashboard extends javax.swing.JFrame {
         lblClientSince.setText("jLabel3");
 
         btnEditClient.setText("Edit");
+        btnEditClient.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditClientActionPerformed(evt);
+            }
+        });
 
         txtGender.setEditable(false);
         txtGender.setText("jTextField1");
@@ -537,6 +541,16 @@ public class Dashboard extends javax.swing.JFrame {
     private void btnNewDocumentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewDocumentActionPerformed
         new NewDocument(this, true).setVisible(true);
     }//GEN-LAST:event_btnNewDocumentActionPerformed
+
+    private void btnEditClientActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditClientActionPerformed
+        Client c = FakeDB.getClient((String)this.lstClientList.getSelectedValue());
+        
+        if (c == null) {
+            return;
+        }
+        
+        new ModifyClient(this, true, c).setVisible(true);
+    }//GEN-LAST:event_btnEditClientActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEditClient;

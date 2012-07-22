@@ -59,8 +59,6 @@ public class DocumentView extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         txtAreaNotes = new javax.swing.JTextArea();
 
-        setBackground(new java.awt.Color(228, 228, 228));
-
         lblDocumentName.setFont(new java.awt.Font("Ubuntu", 1, 16)); // NOI18N
         lblDocumentName.setText("jLabel1");
 

@@ -28,12 +28,13 @@ public class Client {
      */
     public Client(String n) {
         this.name = n;
+        this.since = "Jun 20, 2000";
         this.gender = "Other";
         this.age = "Other";
-        this.dependents = "None";
+        this.dependents = "No";
         this.income = "Below 20K";
         this.marital = "Single";
-        this.employment = "Student";
+        this.employment = "Unemployeed";
         
         this.documents = new HashMap<>();
         this.fillDocumentList();
@@ -43,14 +44,16 @@ public class Client {
      * Initialize a client with all attributes
      * 
      * @param n name
+     * @param s since
      * @param g gender
      * @param a age
      * @param d dependents
      * @param i annual income
      * @param m marital status
      * @param e employment
+     * @param fill whether to fill this client with some preset data or not
      */
-    public Client(String n, String s, String g, String a, String d, String i, String m, String e) {
+    public Client(String n, String s, String g, String a, String d, String i, String m, String e, boolean fill) {
         this.name = n;
         this.since = s;
         this.gender = g;
@@ -61,7 +64,9 @@ public class Client {
         this.employment = e;
         
         this.documents = new HashMap<>();
-        this.fillDocumentList();
+        if (fill) {
+            this.fillDocumentList();
+        }
     }
     
     public Client(String n, String s, String g, String a, String i, String m) {
@@ -71,6 +76,8 @@ public class Client {
         this.age = a;
         this.income = i;
         this.marital = m;
+        this.dependents = "No";
+        this.employment = "Unemployeed";
         
         this.documents = new HashMap<>();
         this.fillDocumentList();
