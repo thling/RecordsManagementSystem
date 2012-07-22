@@ -4,6 +4,8 @@
  */
 package team8;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 /**
  *
@@ -12,6 +14,7 @@ import java.util.HashMap;
 public class FakeDB {
     private static HashMap<String, Client> clientList;
     private static FakeDB __instance = null;
+    private static HashMap<String, String> dateMap = new HashMap<>();
     
     private FakeDB() {
         clientList = new HashMap<>();
@@ -29,26 +32,137 @@ public class FakeDB {
         clientList.put("Henry Oh", new Client("Henry Oh"));
     }
     
+    /**
+     * Init
+     */
     public static void initDb() {
         if (__instance == null) {
             __instance = new FakeDB();
+            
+            dateMap = new HashMap<>();
+            dateMap.put("Jan", "01");
+            dateMap.put("Feb", "02");
+            dateMap.put("Mar", "03");
+            dateMap.put("Apr", "04");
+            dateMap.put("May", "05");
+            dateMap.put("Jun", "06");
+            dateMap.put("Jul", "07");
+            dateMap.put("Aug", "08");
+            dateMap.put("Sep", "09");
+            dateMap.put("Oct", "10");
+            dateMap.put("Nov", "11");
+            dateMap.put("Dec", "12");
         }
     }
     
+    /**
+     * Returns the first of clients
+     * 
+     * @return Client object in the first list
+     */
+    public static Client popClient() {
+        Object[] keys = (clientList.keySet().toArray());
+        
+        return clientList.get((String)keys[0]);
+    }
+    
+    public static Client[] getClientList() {
+        Client[] c = clientList.values().toArray(new Client[0]);
+        
+        Arrays.sort(c, new Comparator(){ 
+            @Override
+            public int compare(Object a, Object b) {
+                return ((Client)a).getName().compareTo(((Client)b).getName());
+            }
+        });
+        
+        return c;
+    }
+    
+    /**
+     * Adds a new client
+     * @param nm the name to add
+     */
     public static void addClient(String nm) {
         clientList.put(nm, new Client(nm));
     }
     
-    public static HashMap<String, Document> getDocumentsByClient(String name) {
+    /**
+     * Returns sorted array
+     * 
+     * @param name name of client
+     * @param orderBy either "Name" or "Date Added"
+     * @return 
+     */
+    public static Document[] getDocumentsByClient(String name, String orderBy) {
         Client c = clientList.get(name);
         
         if (c == null) {
             return null;
         }
         
-        return c.getDocumentList();
+        if (!orderBy.equals("Name") && !orderBy.equals("Date Added")) {
+            orderBy = "Name";
+        }
+        
+        HashMap<String, Document> dlist = c.getDocumentList();
+        Document[] documents = dlist.values().toArray(new Document[0]);
+        
+        final String order = orderBy;
+        Arrays.sort(documents, new Comparator(){
+            @Override
+            public int compare(Object a, Object b) {
+                Document d1 = (Document)a;
+                Document d2 = (Document)b;
+                
+                if (order.equals("Name")) {
+                    return d1.getName().compareToIgnoreCase(d2.getName());
+                } else {                    
+                    String d1Date = d1.getDateAdded();
+                    String d2Date = d2.getDateAdded();
+                    
+                    int year = d2Date.substring(8, 12).compareTo(d1Date.substring(8, 12));
+                    
+                    if (year != 0) {
+                        return year;
+                    } else {
+                        d1Date.replace(d1Date.substring(0,3), dateMap.get(d1Date.substring(0,3)));
+                        d2Date.replace(d2Date.substring(0,3), dateMap.get(d2Date.substring(0,3)));
+                        
+                        int month = d2Date.substring(0, 3).compareTo(d1Date.substring(0, 3));
+                        
+                        if (month != 0) {
+                            return month;
+                        } else {
+                            int day = d2Date.substring(4, 6).compareTo(d1Date.substring(4, 6));
+                            
+                            if (day != 0) {
+                                return day;
+                            }
+                        }
+                    }
+                    
+                    int res = d1Date.compareTo(d2Date);
+                    if (res == 0) {
+                        return d1.getName().compareToIgnoreCase(d2.getName());
+                    } else {
+                        return res;
+                    }
+                }
+            }
+        });
+        
+        
+        return documents;
     }
     
+    /**
+     * Returns a document of a client
+     * 
+     * @param clientName name of client
+     * @param documentName name of document
+     * @return 
+     */
     public static Document getDocumentByClient(String clientName, String documentName) {
         Client c = clientList.get(clientName);
         
@@ -59,6 +173,12 @@ public class FakeDB {
         return c.getDocumentByName(documentName);
     }
     
+    /**
+     * Adds new document to db
+     * 
+     * @param client the client that owns this document
+     * @param doc the document to be added
+     */
     public static void addDocument(String client, Document doc) {
         Client c = clientList.get(client);
         

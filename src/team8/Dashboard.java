@@ -4,47 +4,133 @@
  */
 package team8;
 
-import java.awt.GridLayout;
-import java.util.HashMap;
-import java.util.Set;
+import java.awt.*;
+import java.util.ArrayList;
 
 /**
  *
  * @author sam
  */
 public class Dashboard extends javax.swing.JFrame {
+    private static Dashboard _instance = null;
+    public static String sortType;
+    
+    private static Point lastPnlDocumentClick = null;
     /**
      * Creates new form Dashboard
      */
-    public Dashboard() {
+    private Dashboard() {
         initComponents();
+    }
+    
+    public static Dashboard getInstance() {
+        if (_instance == null) {
+            _instance = new Dashboard();
+        }
+        
+        return _instance;
+    }
+    
+    public void display() {
         Util.setFrameInMiddle(this);
+        setVisible(true);
+        comboSortType.removeAllItems();
+        comboSortType.addItem("Date Added");
+        comboSortType.addItem("Name");
+        comboSortType.setSelectedItem("Name");
         
-        // FakeDB
-        FakeDB.initDb();
+        sortType = "Name";
+                
+        updateClientList();
+    }
+    
+    public void updateClientList() {
+        updateClientList("");
+    }
+    
+    public void updateClientList(String filter) {
+        Client[] clist = FakeDB.getClientList();
         
-        HashMap<String, Document> dlist = FakeDB.getDocumentsByClient("Emily Wang");
+        if (filter == null) {
+            filter = "";
+        }
+        
+        lstClientList.removeAll();
+        String[] names = new String[clist.length];
+        int lstInd = 0;
+        for (int i = 0; i < clist.length; i++) {
+            if (!filter.equals("")
+                    && !clist[i].getName().toLowerCase().contains(filter.toLowerCase())) {
+                
+                continue;
+            }
+            
+            names[lstInd] = clist[i].getName();
+            lstInd++;
+        }
+        
+        lstClientList.setListData(names);
+        
+//        this.scrpnlClientList.doLayout();
+//        this.lstClientList.doLayout();
+        this.lstClientList.repaint();
+    }
+    
+    public void updateDocumentList(String name) {
+        updateDocumentList(name, "");
+    }
+    
+    public void updateDocumentList(String name, String filter) {
+        Document[] dlist = FakeDB.getDocumentsByClient(name, (String)comboSortType.getSelectedItem());
+        
+        this.pnlDocumentList.removeAll();
+        
+        if (filter == null) {
+            filter = "";
+        }
+        System.out.println(filter);
         
         // Document list
-        GridLayout g = new GridLayout(dlist.size(),1);
-        g.setVgap(10);
+        ArrayList<DocumentPanel> panelsToAdd = new ArrayList<>();
+        for (int i = 0; i < dlist.length; i++) {
+            DocumentPanel p = new DocumentPanel(dlist[i]);
+            if (!filter.equals("")
+                    && !p.getDocument().getName().toLowerCase().contains(filter.toLowerCase())) {
+                continue;
+            }
+            
+            panelsToAdd.add(p);
+        }
+        
+        GridBagLayout g = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        c.anchor = GridBagConstraints.NORTH;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.insets = new Insets(3,3,3,3);
         
         this.pnlDocumentList.setLayout(g);
         
-        Set<String> keySet = dlist.keySet();
-        
-        for (int i = 0; i < dlist.size(); i++) {
-            DocumentPanel p = new DocumentPanel();
-            p.setDocumentName(dlist.get((String)keySet.toArray()[i]).getName());
-            p.setDateAdded(dlist.get((String)keySet.toArray()[i]).getDateAdded());
+        for (int i = 0; i < panelsToAdd.size(); i++) {
+            c.gridy = i;
+            if ( i == panelsToAdd.size() - 1) {
+                c.weighty = 1.0;
+            }
             
-            this.pnlDocumentList.add(p);
-            
+            DocumentPanel dp = panelsToAdd.get(i);
+            g.setConstraints(dp, c);
+            this.pnlDocumentList.add(dp);
         }
+        
+        for (int i = 0; i < this.pnlDocumentList.getComponentCount(); i++) {
+            this.pnlDocumentList.getComponent(i).doLayout();
+        }
+        
+        this.pnlDocumentList.doLayout();
+        this.scrpnlDocuments.doLayout();
+//        this.scrpnlDocuments.repaint();
     }
     
-    
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -58,8 +144,8 @@ public class Dashboard extends javax.swing.JFrame {
         tabActive = new javax.swing.JPanel();
         btnFilterClients = new javax.swing.JButton();
         txtSearchClient = new javax.swing.JTextField();
-        pnlActiveClient = new javax.swing.JScrollPane();
-        pnlClients = new javax.swing.JPanel();
+        scrpnlClientList = new javax.swing.JScrollPane();
+        lstClientList = new javax.swing.JList();
         tabInactive = new javax.swing.JPanel();
         pnlLoadingFiles = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -73,40 +159,43 @@ public class Dashboard extends javax.swing.JFrame {
         scrpnlDocuments = new javax.swing.JScrollPane();
         pnlDocumentList = new javax.swing.JPanel();
         scrpnlDocumentView = new javax.swing.JScrollPane();
-        jPanel1 = new javax.swing.JPanel();
+        pnlDocumentView = new javax.swing.JPanel();
+        comboSortType = new javax.swing.JComboBox();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Records Management System");
 
         btnFilterClients.setText("Filter Clients by...");
 
-        javax.swing.GroupLayout pnlClientsLayout = new javax.swing.GroupLayout(pnlClients);
-        pnlClients.setLayout(pnlClientsLayout);
-        pnlClientsLayout.setHorizontalGroup(
-            pnlClientsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 206, Short.MAX_VALUE)
-        );
-        pnlClientsLayout.setVerticalGroup(
-            pnlClientsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 276, Short.MAX_VALUE)
-        );
+        txtSearchClient.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtSearchClientKeyReleased(evt);
+            }
+        });
 
-        pnlActiveClient.setViewportView(pnlClients);
+        lstClientList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        lstClientList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lstClientListMouseClicked(evt);
+            }
+        });
+        scrpnlClientList.setViewportView(lstClientList);
 
         javax.swing.GroupLayout tabActiveLayout = new javax.swing.GroupLayout(tabActive);
         tabActive.setLayout(tabActiveLayout);
         tabActiveLayout.setHorizontalGroup(
             tabActiveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnFilterClients, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnFilterClients, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)
             .addComponent(txtSearchClient)
-            .addComponent(pnlActiveClient)
+            .addComponent(scrpnlClientList, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
         tabActiveLayout.setVerticalGroup(
             tabActiveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tabActiveLayout.createSequentialGroup()
                 .addComponent(txtSearchClient, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pnlActiveClient)
+                .addComponent(scrpnlClientList, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnFilterClients))
         );
@@ -121,7 +210,7 @@ public class Dashboard extends javax.swing.JFrame {
         );
         tabInactiveLayout.setVerticalGroup(
             tabInactiveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 344, Short.MAX_VALUE)
+            .addGap(0, 445, Short.MAX_VALUE)
         );
 
         tabpnlClients.addTab("Inactive Clients", tabInactive);
@@ -151,6 +240,12 @@ public class Dashboard extends javax.swing.JFrame {
 
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/team8/image/document icon.png"))); // NOI18N
 
+        txtSearchDocument.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtSearchDocumentKeyReleased(evt);
+            }
+        });
+
         jSeparator2.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -165,7 +260,7 @@ public class Dashboard extends javax.swing.JFrame {
                 .addComponent(jButton3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 253, Short.MAX_VALUE)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtSearchDocument, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -184,32 +279,46 @@ public class Dashboard extends javax.swing.JFrame {
         );
 
         pnlDocumentList.setMinimumSize(new java.awt.Dimension(10, 100));
+        pnlDocumentList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                pnlDocumentListMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout pnlDocumentListLayout = new javax.swing.GroupLayout(pnlDocumentList);
         pnlDocumentList.setLayout(pnlDocumentListLayout);
         pnlDocumentListLayout.setHorizontalGroup(
             pnlDocumentListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 267, Short.MAX_VALUE)
+            .addGap(0, 338, Short.MAX_VALUE)
         );
         pnlDocumentListLayout.setVerticalGroup(
             pnlDocumentListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 316, Short.MAX_VALUE)
+            .addGap(0, 414, Short.MAX_VALUE)
         );
 
         scrpnlDocuments.setViewportView(pnlDocumentList);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 408, Short.MAX_VALUE)
+        javax.swing.GroupLayout pnlDocumentViewLayout = new javax.swing.GroupLayout(pnlDocumentView);
+        pnlDocumentView.setLayout(pnlDocumentViewLayout);
+        pnlDocumentViewLayout.setHorizontalGroup(
+            pnlDocumentViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 401, Short.MAX_VALUE)
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 316, Short.MAX_VALUE)
+        pnlDocumentViewLayout.setVerticalGroup(
+            pnlDocumentViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 417, Short.MAX_VALUE)
         );
 
-        scrpnlDocumentView.setViewportView(jPanel1);
+        scrpnlDocumentView.setViewportView(pnlDocumentView);
+
+        comboSortType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        comboSortType.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboSortTypeActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Sort by:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -222,11 +331,17 @@ public class Dashboard extends javax.swing.JFrame {
                         .addComponent(tabpnlClients, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(scrpnlDocuments)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                        .addGap(6, 6, 6)
+                                        .addComponent(jLabel2)
+                                        .addGap(3, 3, 3)
+                                        .addComponent(comboSortType, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addComponent(scrpnlDocuments, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(scrpnlDocumentView, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addComponent(scrpnlDocumentView))))
                     .addComponent(pnlLoadingFiles, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
@@ -242,8 +357,13 @@ public class Dashboard extends javax.swing.JFrame {
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(scrpnlDocuments)
-                            .addComponent(scrpnlDocumentView)))
+                            .addComponent(scrpnlDocumentView, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(comboSortType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel2))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(scrpnlDocuments, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))))
                     .addComponent(tabpnlClients))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlLoadingFiles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -255,20 +375,77 @@ public class Dashboard extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void comboSortTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboSortTypeActionPerformed
+        if (comboSortType.getItemCount() == 0 || lstClientList.getModel().getSize() == 0) {
+            return;
+        }
+        
+        updateDocumentList((String)lstClientList.getSelectedValue());
+    }//GEN-LAST:event_comboSortTypeActionPerformed
+
+    private void lstClientListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lstClientListMouseClicked
+        updateDocumentList((String)lstClientList.getSelectedValue());
+        this.pnlDocumentView.removeAll();
+        this.pnlDocumentView.doLayout();
+        this.scrpnlDocumentView.doLayout();
+    }//GEN-LAST:event_lstClientListMouseClicked
+
+    private void txtSearchClientKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchClientKeyReleased
+        updateClientList(txtSearchClient.getText());
+    }//GEN-LAST:event_txtSearchClientKeyReleased
+
+    private void pnlDocumentListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlDocumentListMouseClicked
+        Point thisClick = evt.getPoint();
+        
+        Component c = this.pnlDocumentList.getComponentAt(thisClick);
+        if (!c.getClass().getName().equals("team8.DocumentPanel")) {
+            return;
+        }
+        
+        DocumentPanel dp = (DocumentPanel)c;
+        
+        dp.setBackground(Color.white);
+        
+        if (lastPnlDocumentClick != null) {
+            this.pnlDocumentList.getComponentAt(lastPnlDocumentClick).setBackground(new Color(238, 238, 238));
+        }
+        
+        lastPnlDocumentClick = thisClick;
+        
+        this.pnlDocumentView.removeAll();
+        
+        this.pnlDocumentView.setLayout(new GridLayout(1,1));
+        DocumentView dv = new DocumentView(dp.getDocument());
+        
+        this.pnlDocumentView.add(dv);
+        
+        this.scrpnlDocumentView.doLayout();
+        this.pnlDocumentView.doLayout();
+        dv.doLayout();
+        
+        this.scrpnlDocumentView.repaint();
+    }//GEN-LAST:event_pnlDocumentListMouseClicked
+
+    private void txtSearchDocumentKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchDocumentKeyReleased
+        updateDocumentList((String)lstClientList.getSelectedValue(), this.txtSearchDocument.getText());
+    }//GEN-LAST:event_txtSearchDocumentKeyReleased
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnFilterClients;
+    private javax.swing.JComboBox comboSortType;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JScrollPane pnlActiveClient;
-    private javax.swing.JPanel pnlClients;
+    private javax.swing.JList lstClientList;
     private javax.swing.JPanel pnlDocumentList;
+    private javax.swing.JPanel pnlDocumentView;
     private javax.swing.JPanel pnlLoadingFiles;
+    private javax.swing.JScrollPane scrpnlClientList;
     private javax.swing.JScrollPane scrpnlDocumentView;
     private javax.swing.JScrollPane scrpnlDocuments;
     private javax.swing.JPanel tabActive;

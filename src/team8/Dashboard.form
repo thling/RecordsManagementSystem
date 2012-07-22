@@ -30,12 +30,20 @@
                       <Component id="tabpnlClients" min="-2" pref="216" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="scrpnlDocuments" max="32767" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="scrpnlDocumentView" min="-2" pref="410" max="-2" attributes="0"/>
-                          </Group>
                           <Component id="jPanel2" max="32767" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+                                      <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
+                                      <Component id="comboSortType" max="32767" attributes="0"/>
+                                  </Group>
+                                  <Component id="scrpnlDocuments" min="-2" pref="264" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="scrpnlDocumentView" max="32767" attributes="0"/>
+                          </Group>
                       </Group>
                   </Group>
                   <Component id="pnlLoadingFiles" max="32767" attributes="0"/>
@@ -57,8 +65,15 @@
                       <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="scrpnlDocuments" max="32767" attributes="0"/>
-                          <Component id="scrpnlDocumentView" max="32767" attributes="0"/>
+                          <Component id="scrpnlDocumentView" pref="0" max="32767" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="comboSortType" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="scrpnlDocuments" pref="0" max="32767" attributes="0"/>
+                          </Group>
                       </Group>
                   </Group>
                   <Component id="tabpnlClients" max="32767" attributes="0"/>
@@ -89,9 +104,9 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="btnFilterClients" max="32767" attributes="0"/>
+                  <Component id="btnFilterClients" pref="208" max="32767" attributes="0"/>
                   <Component id="txtSearchClient" alignment="0" max="32767" attributes="0"/>
-                  <Component id="pnlActiveClient" alignment="0" max="32767" attributes="0"/>
+                  <Component id="scrpnlClientList" alignment="0" pref="0" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -99,7 +114,7 @@
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="txtSearchClient" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="pnlActiveClient" max="32767" attributes="0"/>
+                      <Component id="scrpnlClientList" pref="379" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btnFilterClients" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -113,26 +128,28 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="txtSearchClient">
+              <Events>
+                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtSearchClientKeyReleased"/>
+              </Events>
             </Component>
-            <Container class="javax.swing.JScrollPane" name="pnlActiveClient">
+            <Container class="javax.swing.JScrollPane" name="scrpnlClientList">
+              <AuxValues>
+                <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+              </AuxValues>
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Container class="javax.swing.JPanel" name="pnlClients">
-
-                  <Layout>
-                    <DimensionLayout dim="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <EmptySpace min="0" pref="206" max="32767" attributes="0"/>
-                      </Group>
-                    </DimensionLayout>
-                    <DimensionLayout dim="1">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <EmptySpace min="0" pref="276" max="32767" attributes="0"/>
-                      </Group>
-                    </DimensionLayout>
-                  </Layout>
-                </Container>
+                <Component class="javax.swing.JList" name="lstClientList">
+                  <Properties>
+                    <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">
+                      <StringArray count="0"/>
+                    </Property>
+                    <Property name="selectionMode" type="int" value="0"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lstClientListMouseClicked"/>
+                  </Events>
+                </Component>
               </SubComponents>
             </Container>
           </SubComponents>
@@ -154,7 +171,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="344" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="445" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -201,7 +218,7 @@
                   <Component id="jButton3" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jButton4" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="253" max="32767" attributes="0"/>
                   <Component id="jSeparator2" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="txtSearchDocument" min="-2" pref="173" max="-2" attributes="0"/>
@@ -257,6 +274,9 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="txtSearchDocument">
+          <Events>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtSearchDocumentKeyReleased"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JSeparator" name="jSeparator2">
           <Properties>
@@ -275,16 +295,19 @@
               <Dimension value="[10, 100]"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="pnlDocumentListMouseClicked"/>
+          </Events>
 
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="267" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="338" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="316" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="414" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -295,22 +318,42 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Container class="javax.swing.JPanel" name="jPanel1">
+        <Container class="javax.swing.JPanel" name="pnlDocumentView">
 
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="408" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="401" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="316" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="417" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
         </Container>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JComboBox" name="comboSortType">
+      <Properties>
+        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+          <StringArray count="4">
+            <StringItem index="0" value="Item 1"/>
+            <StringItem index="1" value="Item 2"/>
+            <StringItem index="2" value="Item 3"/>
+            <StringItem index="3" value="Item 4"/>
+          </StringArray>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="comboSortTypeActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel2">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Sort by:"/>
+      </Properties>
+    </Component>
   </SubComponents>
 </Form>

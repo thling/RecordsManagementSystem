@@ -4,19 +4,28 @@
  */
 package team8;
 
-import java.awt.Color;
+import java.awt.Dimension;
 
 /**
  *
  * @author sam
  */
 public class DocumentPanel extends javax.swing.JPanel {
+    private Document doc = null;
 
     /**
      * Creates new form DocumentPanel
      */
-    public DocumentPanel() {
+    public DocumentPanel(Document d) {
         initComponents();
+        
+        this.doc = d;
+        this.lblDocumentName.setText(d.getName());
+        this.lblDateAdded.setText(d.getDateAdded());
+    }
+    
+    public Document getDocument() {
+        return this.doc;
     }
     
     public void setDocumentName(String txt) {
@@ -40,8 +49,11 @@ public class DocumentPanel extends javax.swing.JPanel {
         jSeparator1 = new javax.swing.JSeparator();
         lblDateAdded = new javax.swing.JLabel();
 
-        setBackground(new java.awt.Color(254, 254, 254));
+        setBackground(new java.awt.Color(238, 238, 238));
         setBorder(new javax.swing.border.LineBorder(new java.awt.Color(125, 125, 125), 1, true));
+        setMaximumSize(new java.awt.Dimension(32767, 100));
+        setMinimumSize(new java.awt.Dimension(0, 100));
+        setName("");
         setPreferredSize(new java.awt.Dimension(230, 100));
 
         lblDocumentName.setFont(new java.awt.Font("Ubuntu", 1, 18)); // NOI18N
@@ -61,7 +73,7 @@ public class DocumentPanel extends javax.swing.JPanel {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblDocumentName)
                             .addComponent(lblDateAdded))
-                        .addGap(0, 82, Short.MAX_VALUE)))
+                        .addGap(0, 61, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(

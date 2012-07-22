@@ -38,6 +38,17 @@ public class Client {
         this.fillDocumentList();
     }
     
+    /**
+     * Initialize a client with all attributes
+     * 
+     * @param n name
+     * @param g gender
+     * @param a age
+     * @param d dependents
+     * @param i annual income
+     * @param m marital status
+     * @param e employment
+     */
     public Client(String n, String g, String a, String d, String i, String m, String e) {
         this.name = n;
         this.gender = g;
@@ -52,12 +63,12 @@ public class Client {
     }
     
     private void fillDocumentList() {
-        this.documents.put("ABC Life Insurance", new Document("ABC Life Insurance"));
-        this.documents.put("DEF Mutual Fund", new Document("DEF Mutual Fund"));
-        this.documents.put("TD Waterhouse", new Document("TD Waterhouse"));
-        this.documents.put("Sammy Segfunds", new Document("Sammy Segfunds"));
-        this.documents.put("Ahaha Critical Illness", new Document("Ahaha Critical Illness"));
-        this.documents.put("Momentum Bonds", new Document("Momentum Bonds"));
+        this.documents.put("ABC Life Insurance", new Document("ABC Life Insurance", "Jun 19, 2011", "Insurance", "ABC Corp."));
+        this.documents.put("DEF Mutual Fund", new Document("DEF Mutual Fund", "Nov 01, 2010", "Investment", "DEF Group"));
+        this.documents.put("TD Waterhouse", new Document("TD Crazy Fund", "Aug 13, 2012", "Investment", "TD Waterhouse"));
+        this.documents.put("Sammy Segfunds", new Document("Sammy Segfunds", "Feb 14, 2011", "Investment", "Sammy Beast Corp."));
+        this.documents.put("Ahaha Critical Illness", new Document("Ahaha Critical Illness", "Apr 30, 2008", "Insurance", "Ahaha Foundation"));
+        this.documents.put("Momentum Bonds", new Document("Momentum Bonds", "Oct 23, 2008", "Investment", "Momentum Canada, Inc."));
     }
     
     /**
