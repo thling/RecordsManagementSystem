@@ -4,9 +4,9 @@
  */
 package team8;
 
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import javax.swing.JFrame;
 
 /**
  * Misc functions
@@ -18,7 +18,7 @@ public class Util {
      * Sets the parameter frame in the middle of the screen
      * @param frame The JFrame object to be set in the middle of screen
      */
-    public static void setFrameInMiddle(JFrame frame) {
+    public static void setFrameInMiddle(Container frame) {
         int height = frame.getHeight();
         int width = frame.getWidth();
         

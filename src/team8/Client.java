@@ -13,6 +13,7 @@ import java.util.HashMap;
 public class Client {
     private String name;
     private HashMap<String, Document> documents;
+    private String since;
     private String gender;
     private String age;
     private String dependents;
@@ -49,8 +50,9 @@ public class Client {
      * @param m marital status
      * @param e employment
      */
-    public Client(String n, String g, String a, String d, String i, String m, String e) {
+    public Client(String n, String s, String g, String a, String d, String i, String m, String e) {
         this.name = n;
+        this.since = s;
         this.gender = g;
         this.age = a;
         this.dependents = d;
@@ -62,13 +64,36 @@ public class Client {
         this.fillDocumentList();
     }
     
+    public Client(String n, String s, String g, String a, String i, String m) {
+        this.name = n;
+        this.since = s;
+        this.gender = g;
+        this.age = a;
+        this.income = i;
+        this.marital = m;
+        
+        this.documents = new HashMap<>();
+        this.fillDocumentList();
+    }
+    
     private void fillDocumentList() {
-        this.documents.put("ABC Life Insurance", new Document("ABC Life Insurance", "Jun 19, 2011", "Insurance", "ABC Corp."));
-        this.documents.put("DEF Mutual Fund", new Document("DEF Mutual Fund", "Nov 01, 2010", "Investment", "DEF Group"));
-        this.documents.put("TD Waterhouse", new Document("TD Crazy Fund", "Aug 13, 2012", "Investment", "TD Waterhouse"));
-        this.documents.put("Sammy Segfunds", new Document("Sammy Segfunds", "Feb 14, 2011", "Investment", "Sammy Beast Corp."));
-        this.documents.put("Ahaha Critical Illness", new Document("Ahaha Critical Illness", "Apr 30, 2008", "Insurance", "Ahaha Foundation"));
-        this.documents.put("Momentum Bonds", new Document("Momentum Bonds", "Oct 23, 2008", "Investment", "Momentum Canada, Inc."));
+        this.documents.put("ABC Life Insurance", 
+                new Document("ABC Life Insurance", "Jun 19, 2011", "Insurance", "ABC Corp."));
+        
+        this.documents.put("DEF Mutual Fund", 
+                new Document("DEF Mutual Fund", "Nov 01, 2010", "Investment", "DEF Group"));
+        
+        this.documents.put("TD Waterhouse",
+                new Document("TD Crazy Fund", "Aug 13, 2012", "Investment", "TD Waterhouse"));
+        
+        this.documents.put("Sammy Segfunds",
+                new Document("Sammy Segfunds", "Feb 14, 2011", "Investment", "Sammy Beast Corp."));
+        
+        this.documents.put("Ahaha Critical Illness", 
+                new Document("Ahaha Critical Illness", "Apr 30, 2008", "Insurance", "Ahaha Foundation"));
+        
+        this.documents.put("Momentum Bonds",
+                new Document("Momentum Bonds", "Oct 23, 2008", "Investment", "Momentum Canada, Inc."));
     }
     
     /**
@@ -85,6 +110,34 @@ public class Client {
      */
     public void setName(String n) {
         this.name = n;
+    }
+    
+    public String getGender() {
+        return this.gender;
+    }
+    
+    public String getSince() {
+        return this.since;
+    }
+    
+    public String getAge() {
+        return this.age;
+    }
+    
+    public String getMarital() {
+        return this.marital;
+    }
+    
+    public String getDependents() {
+        return this.dependents;
+    }
+    
+    public String getIncome() {
+        return this.income;
+    }
+    
+    public String getEmployment() {
+        return this.employment;
     }
     
     /**
