@@ -13,7 +13,6 @@ import java.util.Set;
  * @author sam
  */
 public class Dashboard extends javax.swing.JFrame {
-
     /**
      * Creates new form Dashboard
      */
