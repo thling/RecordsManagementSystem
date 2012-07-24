@@ -16,7 +16,6 @@ public class Login extends javax.swing.JFrame {
     public Login() {
         initComponents();
         Util.setFrameInMiddle(this);
-        this.btnLogin.setEnabled(true);
     }
     
     /**

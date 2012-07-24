@@ -5,6 +5,10 @@
 package team8;
 
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
 /**
@@ -14,15 +18,49 @@ import java.util.ArrayList;
 public class Dashboard extends javax.swing.JFrame {
     private static Dashboard _instance = null;
     public static String sortType;
-    
+    private ArrayList<String> globalFilter = new ArrayList<>();
     private static Point lastPnlDocumentClick = null;
+    
     /**
      * Creates new form Dashboard
      */
     private Dashboard() {
         initComponents();
+        
+        this.addComponentListener(new ComponentAdapter() {
+
+            @Override
+            public void componentHidden(ComponentEvent e) {
+                super.componentHidden(e);
+                dlgFilterType.dispose();
+            }
+
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                super.componentMoved(e);
+                Point p = btnFilterClients.getLocationOnScreen();
+                dlgFilterType.setSize(btnFilterClients.getWidth(), 300);
+                dlgFilterType.setLocation(p.x, p.y - dlgFilterType.getHeight() + btnFilterClients.getHeight());
+            }
+
+            @Override
+            public void componentResized(ComponentEvent e) {
+                super.componentResized(e);
+                Point p = btnFilterClients.getLocationOnScreen();
+                dlgFilterType.setSize(btnFilterClients.getWidth(), 300);
+                dlgFilterType.setLocation(p.x, p.y - dlgFilterType.getHeight() + btnFilterClients.getHeight());
+            }
+        
+        });
+        
+        
+        this.pnlLoadingFiles.setVisible(false);
     }
     
+    /**
+     * Returns an instance of dashboard
+     * @return Dashboard
+     */
     public static Dashboard getInstance() {
         if (_instance == null) {
             _instance = new Dashboard();
@@ -31,6 +69,9 @@ public class Dashboard extends javax.swing.JFrame {
         return _instance;
     }
     
+    /**
+     * Process some other post initialization
+     */
     public void display() {
         Util.setFrameInMiddle(this);
         setVisible(true);
@@ -49,25 +90,60 @@ public class Dashboard extends javax.swing.JFrame {
         this.txtGender.setVisible(false);
         this.txtIncome.setVisible(false);
         this.txtMarital.setVisible(false);
+        this.btnEditClient.setEnabled(false);
     }
     
+    /**
+     * Updates the client list
+     */
     public void updateClientList() {
-        updateClientList("");
+        this.txtSearchClient.setText(null);
+        updateClientList(null);
     }
     
-    public void updateClientList(String filter) {
+    /**
+     * Filter client list
+     * 
+     * @param c Client object
+     * @param filter String to filter with
+     * @return True if the client satisfies everything listed in filter
+     */
+    private boolean clientSatisfies(Client c, String[] filter) {
+        if (this.txtSearchClient.getText().length() > 0) {
+            if (!c.getName().toLowerCase().contains(this.txtSearchClient.getText())) {
+                return false;
+            }
+        }
+        
+        for (int i = 0; i < filter.length; i++) {
+            if (!c.getAge().contains(filter[i])
+                    && !c.getGender().contains(filter[i])
+                    && !c.getIncome().contains(filter[i])
+                    && !c.getMarital().contains(filter[i])) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Updates the client list
+     * 
+     * @param filter List of filter to use with
+     */
+    public void updateClientList(String[] filter) {
         Client[] clist = FakeDB.getClientList();
         
         if (filter == null) {
-            filter = "";
+            filter = new String[0];
         }
         
         this.lstClientList.removeAll();
         String[] names = new String[clist.length];
         int lstInd = 0;
         for (int i = 0; i < clist.length; i++) {
-            if (!filter.equals("")
-                    && !clist[i].getName().toLowerCase().contains(filter.toLowerCase())) {
+            if (!clientSatisfies(clist[i], filter)) {
                 
                 continue;
             }
@@ -76,18 +152,40 @@ public class Dashboard extends javax.swing.JFrame {
             lstInd++;
         }
         
-        this.txtSearchClient.setText(null);
         this.lstClientList.setListData(names);
         this.lstClientList.repaint();
     }
     
+    /**
+     * Update the document list with a client name
+     * 
+     * @param name Name a client
+     */
     public void updateDocumentList(String name) {
+        this.txtSearchDocument.setText(null);
         updateDocumentList(name, "");
     }
     
+    /**
+     * Updates the document list under a client, filter with second pararmeter
+     * 
+     * @param name Name of a client
+     * @param filter Search strings to filter with
+     */
     public void updateDocumentList(String name, String filter) {
-        Document[] dlist = FakeDB.getDocumentsByClient(name, (String)this.comboSortType.getSelectedItem());
+        // If filter is null, and if there's no selected client, return
+        if (filter != null) {
+            if (this.lstClientList.getSelectedIndex() == -1) {
+                this.pnlDocumentList.removeAll();
+                this.pnlDocumentList.doLayout();
+                this.scrpnlDocuments.doLayout();
+                return;
+            }
+        }
         
+        // Gets the list of documents owned by the selected client
+        Document[] dlist = FakeDB.getDocumentsByClient(name, (String)this.comboSortType.getSelectedItem());
+                
         this.pnlDocumentList.removeAll();
         
         if (filter == null) {
@@ -106,6 +204,7 @@ public class Dashboard extends javax.swing.JFrame {
             panelsToAdd.add(p);
         }
         
+        // Sets up the grids in scroll bar
         GridBagLayout g = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         c.anchor = GridBagConstraints.NORTH;
@@ -130,8 +229,34 @@ public class Dashboard extends javax.swing.JFrame {
             this.pnlDocumentList.getComponent(i).doLayout();
         }
         
+        // Relayout
         this.pnlDocumentList.doLayout();
         this.scrpnlDocuments.doLayout();
+    }
+    
+    /**
+     * Updates the client information shown above the document list and document view
+     * 
+     * @param c Client object to update with
+     */
+    public void updateClientPanel(Client c) {
+        if (c == null) {
+            return;
+        }
+        
+        this.btnEditClient.setEnabled(true);
+        this.lblClientName.setText(" " + c.getName());
+        this.lblClientSince.setText("Client Since " + c.getSince());
+        this.txtAge.setText("  Age: " + c.getAge() + "  ");
+        this.txtGender.setText("  Gender: " + c.getGender() + "  ");
+        this.txtIncome.setText("  Income: " + c.getIncome() + "  ");
+        this.txtMarital.setText("  Marital: " + c.getMarital() + "  ");
+        
+        for (int i = 0; i < this.pnlClientInfo.getComponentCount(); i++) {
+            this.pnlClientInfo.getComponent(i).doLayout();
+        }
+        
+        this.pnlClientInfo.doLayout();
     }
     
     /**
@@ -143,6 +268,36 @@ public class Dashboard extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        dlgFilterType = new javax.swing.JDialog();
+        pnlFilter = new javax.swing.JPanel();
+        btnHideFilter = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        chkGenderMale = new javax.swing.JCheckBox();
+        chkGenderFemale = new javax.swing.JCheckBox();
+        chkGenderOther = new javax.swing.JCheckBox();
+        jSeparator3 = new javax.swing.JSeparator();
+        jLabel5 = new javax.swing.JLabel();
+        chkIncomeBelow20K = new javax.swing.JCheckBox();
+        chkIncome20Kto40K = new javax.swing.JCheckBox();
+        chkIncome40Kto60K = new javax.swing.JCheckBox();
+        chkIncome60Kto80K = new javax.swing.JCheckBox();
+        chkIncomeAbove80K = new javax.swing.JCheckBox();
+        jSeparator4 = new javax.swing.JSeparator();
+        jLabel6 = new javax.swing.JLabel();
+        chkAgeBelow20 = new javax.swing.JCheckBox();
+        chkAge20to40 = new javax.swing.JCheckBox();
+        chkAge40to60 = new javax.swing.JCheckBox();
+        chkAgeAbove60 = new javax.swing.JCheckBox();
+        jSeparator5 = new javax.swing.JSeparator();
+        jLabel7 = new javax.swing.JLabel();
+        chkMaritalSingle = new javax.swing.JCheckBox();
+        chkMaritalMarried = new javax.swing.JCheckBox();
+        chkMaritalDivorced = new javax.swing.JCheckBox();
+        chkMaritalWidowed = new javax.swing.JCheckBox();
+        chkMaritalCommonLaw = new javax.swing.JCheckBox();
         tabpnlClients = new javax.swing.JTabbedPane();
         tabActive = new javax.swing.JPanel();
         btnFilterClients = new javax.swing.JButton();
@@ -151,7 +306,13 @@ public class Dashboard extends javax.swing.JFrame {
         lstClientList = new javax.swing.JList();
         tabInactive = new javax.swing.JPanel();
         pnlLoadingFiles = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        pnlImporting1 = new javax.swing.JPanel();
+        lblDocumentName = new javax.swing.JLabel();
+        pnlImporting2 = new javax.swing.JPanel();
+        lblDocumentName1 = new javax.swing.JLabel();
+        pnlImporting3 = new javax.swing.JPanel();
+        lblDocumentName2 = new javax.swing.JLabel();
+        lblLastSync = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         btnSync = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
@@ -174,10 +335,284 @@ public class Dashboard extends javax.swing.JFrame {
         txtIncome = new javax.swing.JTextField();
         txtMarital = new javax.swing.JTextField();
 
+        dlgFilterType.setUndecorated(true);
+
+        pnlFilter.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(121, 121, 121), 2));
+
+        btnHideFilter.setText("Hide");
+        btnHideFilter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnHideFilterActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setFont(new java.awt.Font("Ubuntu", 1, 13)); // NOI18N
+        jLabel3.setText("Filter by");
+
+        jPanel1.setBackground(new java.awt.Color(254, 254, 254));
+
+        jLabel4.setFont(new java.awt.Font("Ubuntu", 1, 13)); // NOI18N
+        jLabel4.setText("Gender");
+
+        chkGenderMale.setText("Male");
+        chkGenderMale.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkGenderMaleActionPerformed(evt);
+            }
+        });
+
+        chkGenderFemale.setText("Female");
+        chkGenderFemale.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkGenderFemaleActionPerformed(evt);
+            }
+        });
+
+        chkGenderOther.setText("Other");
+        chkGenderOther.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkGenderOtherActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setFont(new java.awt.Font("Ubuntu", 1, 13)); // NOI18N
+        jLabel5.setText("Annual Income");
+
+        chkIncomeBelow20K.setText("Below 20K");
+        chkIncomeBelow20K.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkIncomeBelow20KActionPerformed(evt);
+            }
+        });
+
+        chkIncome20Kto40K.setText("20K to 40K");
+        chkIncome20Kto40K.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkIncome20Kto40KActionPerformed(evt);
+            }
+        });
+
+        chkIncome40Kto60K.setText("40K to 60K");
+        chkIncome40Kto60K.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkIncome40Kto60KActionPerformed(evt);
+            }
+        });
+
+        chkIncome60Kto80K.setText("60K to 80K");
+        chkIncome60Kto80K.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkIncome60Kto80KActionPerformed(evt);
+            }
+        });
+
+        chkIncomeAbove80K.setText("Above 80K");
+        chkIncomeAbove80K.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkIncomeAbove80KActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setFont(new java.awt.Font("Ubuntu", 1, 13)); // NOI18N
+        jLabel6.setText("Age");
+
+        chkAgeBelow20.setText("Below 20");
+        chkAgeBelow20.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkAgeBelow20ActionPerformed(evt);
+            }
+        });
+
+        chkAge20to40.setText("20 to 40");
+        chkAge20to40.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkAge20to40ActionPerformed(evt);
+            }
+        });
+
+        chkAge40to60.setText("40 to 60");
+        chkAge40to60.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkAge40to60ActionPerformed(evt);
+            }
+        });
+
+        chkAgeAbove60.setText("Above 60");
+        chkAgeAbove60.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkAgeAbove60ActionPerformed(evt);
+            }
+        });
+
+        jLabel7.setFont(new java.awt.Font("Ubuntu", 1, 13)); // NOI18N
+        jLabel7.setText("Marital Status");
+
+        chkMaritalSingle.setText("Single");
+        chkMaritalSingle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkMaritalSingleActionPerformed(evt);
+            }
+        });
+
+        chkMaritalMarried.setText("Married");
+        chkMaritalMarried.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkMaritalMarriedActionPerformed(evt);
+            }
+        });
+
+        chkMaritalDivorced.setText("Divorced");
+        chkMaritalDivorced.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkMaritalDivorcedActionPerformed(evt);
+            }
+        });
+
+        chkMaritalWidowed.setText("Widowed");
+        chkMaritalWidowed.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkMaritalWidowedActionPerformed(evt);
+            }
+        });
+
+        chkMaritalCommonLaw.setText("Common Law");
+        chkMaritalCommonLaw.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkMaritalCommonLawActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSeparator3)
+                    .addComponent(jSeparator4)
+                    .addComponent(jSeparator5)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel7)
+                            .addComponent(chkGenderMale)
+                            .addComponent(chkGenderFemale)
+                            .addComponent(chkGenderOther)
+                            .addComponent(chkIncomeBelow20K)
+                            .addComponent(chkIncome20Kto40K)
+                            .addComponent(chkIncome40Kto60K)
+                            .addComponent(chkIncome60Kto80K)
+                            .addComponent(chkIncomeAbove80K)
+                            .addComponent(chkAgeBelow20)
+                            .addComponent(chkAge20to40)
+                            .addComponent(chkAge40to60)
+                            .addComponent(chkAgeAbove60)
+                            .addComponent(chkMaritalSingle)
+                            .addComponent(chkMaritalMarried)
+                            .addComponent(chkMaritalDivorced)
+                            .addComponent(chkMaritalWidowed)
+                            .addComponent(chkMaritalCommonLaw))
+                        .addGap(0, 31, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chkGenderMale)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chkGenderFemale)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chkGenderOther)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chkIncomeBelow20K)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chkIncome20Kto40K)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chkIncome40Kto60K)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chkIncome60Kto80K)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chkIncomeAbove80K)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chkAgeBelow20)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chkAge20to40)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chkAge40to60)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chkAgeAbove60)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chkMaritalSingle)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chkMaritalMarried)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chkMaritalDivorced)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chkMaritalWidowed)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chkMaritalCommonLaw))
+        );
+
+        jScrollPane1.setViewportView(jPanel1);
+
+        javax.swing.GroupLayout pnlFilterLayout = new javax.swing.GroupLayout(pnlFilter);
+        pnlFilter.setLayout(pnlFilterLayout);
+        pnlFilterLayout.setHorizontalGroup(
+            pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlFilterLayout.createSequentialGroup()
+                .addComponent(jLabel3)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
+            .addComponent(btnHideFilter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        pnlFilterLayout.setVerticalGroup(
+            pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlFilterLayout.createSequentialGroup()
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnHideFilter))
+        );
+
+        javax.swing.GroupLayout dlgFilterTypeLayout = new javax.swing.GroupLayout(dlgFilterType.getContentPane());
+        dlgFilterType.getContentPane().setLayout(dlgFilterTypeLayout);
+        dlgFilterTypeLayout.setHorizontalGroup(
+            dlgFilterTypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(pnlFilter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        dlgFilterTypeLayout.setVerticalGroup(
+            dlgFilterTypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(pnlFilter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Records Management System");
 
         btnFilterClients.setText("Filter Clients by...");
+        btnFilterClients.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFilterClientsActionPerformed(evt);
+            }
+        });
 
         txtSearchClient.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -206,7 +641,7 @@ public class Dashboard extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tabActiveLayout.createSequentialGroup()
                 .addComponent(txtSearchClient, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrpnlClientList, javax.swing.GroupLayout.DEFAULT_SIZE, 417, Short.MAX_VALUE)
+                .addComponent(scrpnlClientList, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnFilterClients))
         );
@@ -221,25 +656,123 @@ public class Dashboard extends javax.swing.JFrame {
         );
         tabInactiveLayout.setVerticalGroup(
             tabInactiveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 483, Short.MAX_VALUE)
+            .addGap(0, 506, Short.MAX_VALUE)
         );
 
         tabpnlClients.addTab("Inactive Clients", tabInactive);
 
         pnlLoadingFiles.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
+        pnlImporting1.setBackground(new java.awt.Color(254, 223, 222));
+        pnlImporting1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(128, 128, 128), 1, true));
+
+        lblDocumentName.setFont(new java.awt.Font("Ubuntu", 1, 16)); // NOI18N
+        lblDocumentName.setIcon(new javax.swing.ImageIcon(getClass().getResource("/team8/image/loader.gif"))); // NOI18N
+        lblDocumentName.setText("Importing TD Waterhou...");
+
+        javax.swing.GroupLayout pnlImporting1Layout = new javax.swing.GroupLayout(pnlImporting1);
+        pnlImporting1.setLayout(pnlImporting1Layout);
+        pnlImporting1Layout.setHorizontalGroup(
+            pnlImporting1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlImporting1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblDocumentName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        pnlImporting1Layout.setVerticalGroup(
+            pnlImporting1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlImporting1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblDocumentName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        pnlImporting2.setBackground(new java.awt.Color(220, 254, 214));
+        pnlImporting2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(128, 128, 128), 1, true));
+        pnlImporting2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        pnlImporting2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                pnlImporting2MouseClicked(evt);
+            }
+        });
+
+        lblDocumentName1.setFont(new java.awt.Font("Ubuntu", 1, 16)); // NOI18N
+        lblDocumentName1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/team8/image/checkmark.png"))); // NOI18N
+        lblDocumentName1.setText("Imported Samuel Life E...");
+
+        javax.swing.GroupLayout pnlImporting2Layout = new javax.swing.GroupLayout(pnlImporting2);
+        pnlImporting2.setLayout(pnlImporting2Layout);
+        pnlImporting2Layout.setHorizontalGroup(
+            pnlImporting2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlImporting2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblDocumentName1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        pnlImporting2Layout.setVerticalGroup(
+            pnlImporting2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlImporting2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblDocumentName1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        pnlImporting3.setBackground(new java.awt.Color(220, 254, 214));
+        pnlImporting3.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(128, 128, 128), 1, true));
+        pnlImporting3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        pnlImporting3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                pnlImporting3MouseClicked(evt);
+            }
+        });
+
+        lblDocumentName2.setBackground(new java.awt.Color(179, 253, 165));
+        lblDocumentName2.setFont(new java.awt.Font("Ubuntu", 1, 16)); // NOI18N
+        lblDocumentName2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/team8/image/checkmark.png"))); // NOI18N
+        lblDocumentName2.setText("Imported Crazi Being Life");
+
+        javax.swing.GroupLayout pnlImporting3Layout = new javax.swing.GroupLayout(pnlImporting3);
+        pnlImporting3.setLayout(pnlImporting3Layout);
+        pnlImporting3Layout.setHorizontalGroup(
+            pnlImporting3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlImporting3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblDocumentName2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        pnlImporting3Layout.setVerticalGroup(
+            pnlImporting3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlImporting3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblDocumentName2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout pnlLoadingFilesLayout = new javax.swing.GroupLayout(pnlLoadingFiles);
         pnlLoadingFiles.setLayout(pnlLoadingFilesLayout);
         pnlLoadingFilesLayout.setHorizontalGroup(
             pnlLoadingFilesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(pnlLoadingFilesLayout.createSequentialGroup()
+                .addComponent(pnlImporting1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(pnlImporting2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(pnlImporting3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         pnlLoadingFilesLayout.setVerticalGroup(
             pnlLoadingFilesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 60, Short.MAX_VALUE)
+            .addComponent(pnlImporting1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(pnlImporting2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(pnlImporting3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        jLabel1.setText("Last Sync: Jul 20, 2012 20:31");
+        lblLastSync.setText("Last Sync: Jul 20, 2012 20:31");
+        lblLastSync.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblLastSyncMouseClicked(evt);
+            }
+        });
 
         btnSync.setBackground(new java.awt.Color(254, 254, 254));
         btnSync.setForeground(new java.awt.Color(254, 254, 254));
@@ -310,7 +843,7 @@ public class Dashboard extends javax.swing.JFrame {
         );
         pnlDocumentListLayout.setVerticalGroup(
             pnlDocumentListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 367, Short.MAX_VALUE)
+            .addGap(0, 397, Short.MAX_VALUE)
         );
 
         scrpnlDocuments.setViewportView(pnlDocumentList);
@@ -319,11 +852,11 @@ public class Dashboard extends javax.swing.JFrame {
         pnlDocumentView.setLayout(pnlDocumentViewLayout);
         pnlDocumentViewLayout.setHorizontalGroup(
             pnlDocumentViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 390, Short.MAX_VALUE)
+            .addGap(0, 419, Short.MAX_VALUE)
         );
         pnlDocumentViewLayout.setVerticalGroup(
             pnlDocumentViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 399, Short.MAX_VALUE)
+            .addGap(0, 429, Short.MAX_VALUE)
         );
 
         scrpnlDocumentView.setViewportView(pnlDocumentView);
@@ -428,11 +961,11 @@ public class Dashboard extends javax.swing.JFrame {
                                         .addComponent(comboSortType, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(scrpnlDocumentView))
-                            .addComponent(pnlClientInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 662, Short.MAX_VALUE)))
+                            .addComponent(pnlClientInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 691, Short.MAX_VALUE)))
                     .addComponent(pnlLoadingFiles, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jLabel1)))
+                        .addComponent(lblLastSync)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -451,13 +984,13 @@ public class Dashboard extends javax.swing.JFrame {
                                     .addComponent(comboSortType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel2))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(scrpnlDocuments))
-                            .addComponent(scrpnlDocumentView)))
+                                .addComponent(scrpnlDocuments, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                            .addComponent(scrpnlDocumentView, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                     .addComponent(tabpnlClients))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlLoadingFiles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel1)
+                .addComponent(lblLastSync)
                 .addContainerGap())
         );
 
@@ -480,12 +1013,7 @@ public class Dashboard extends javax.swing.JFrame {
             return;
         }
         
-        this.lblClientName.setText(" " + c.getName());
-        this.lblClientSince.setText("Client Since " + c.getSince());
-        this.txtAge.setText("  Age: " + c.getAge() + "  ");
-        this.txtGender.setText("  Gender: " + c.getGender() + "  ");
-        this.txtIncome.setText("  Income: " + c.getIncome() + "  ");
-        this.txtMarital.setText("  Marital: " + c.getMarital() + "  ");        
+        updateClientPanel(c);
         
         this.pnlDocumentView.removeAll();
         
@@ -499,7 +1027,7 @@ public class Dashboard extends javax.swing.JFrame {
     }//GEN-LAST:event_lstClientListMouseClicked
 
     private void txtSearchClientKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchClientKeyReleased
-        updateClientList(txtSearchClient.getText());
+        updateClientList(null);
     }//GEN-LAST:event_txtSearchClientKeyReleased
 
     private void pnlDocumentListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlDocumentListMouseClicked
@@ -515,7 +1043,9 @@ public class Dashboard extends javax.swing.JFrame {
         dp.setBackground(Color.white);
         
         if (lastPnlDocumentClick != null) {
-            this.pnlDocumentList.getComponentAt(lastPnlDocumentClick).setBackground(new Color(238, 238, 238));
+            if (this.pnlDocumentList.getComponentAt(lastPnlDocumentClick) != null) {
+                this.pnlDocumentList.getComponentAt(lastPnlDocumentClick).setBackground(new Color(238, 238, 238));
+            }
         }
         
         lastPnlDocumentClick = thisClick;
@@ -552,24 +1082,279 @@ public class Dashboard extends javax.swing.JFrame {
         new ModifyClient(this, true, c).setVisible(true);
     }//GEN-LAST:event_btnEditClientActionPerformed
 
+    private void btnFilterClientsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFilterClientsActionPerformed
+        this.dlgFilterType.addWindowFocusListener(new WindowAdapter() {
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+                dlgFilterType.dispose();
+            }
+
+            @Override
+            public void windowLostFocus(WindowEvent e) {
+                super.windowLostFocus(e);
+                dlgFilterType.dispose();
+            }
+
+            @Override
+            public void windowIconified(WindowEvent e) {
+                super.windowIconified(e);
+                dlgFilterType.dispose();
+            }
+            
+        });
+        
+        Point p = this.btnFilterClients.getLocationOnScreen();
+        
+        this.dlgFilterType.setSize(btnFilterClients.getWidth(), 300);
+        this.dlgFilterType.setLocation(p.x, p.y - dlgFilterType.getHeight() + btnFilterClients.getHeight());
+        this.dlgFilterType.setAlwaysOnTop(true);
+        this.dlgFilterType.setVisible(true);
+    }//GEN-LAST:event_btnFilterClientsActionPerformed
+
+    private void btnHideFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHideFilterActionPerformed
+        this.dlgFilterType.dispose();
+    }//GEN-LAST:event_btnHideFilterActionPerformed
+
+    private void chkGenderFemaleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkGenderFemaleActionPerformed
+        if (chkGenderFemale.isSelected()) {
+            this.globalFilter.add(chkGenderFemale.getText());
+        } else {
+            this.globalFilter.remove(chkGenderFemale.getText());
+        }
+        
+        this.updateClientList(globalFilter.toArray(new String[0]));
+    }//GEN-LAST:event_chkGenderFemaleActionPerformed
+
+    private void chkGenderMaleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkGenderMaleActionPerformed
+        if (chkGenderMale.isSelected()) {
+            this.globalFilter.add(chkGenderMale.getText());
+        } else {
+            this.globalFilter.remove(chkGenderMale.getText());
+        }
+        
+        this.updateClientList(globalFilter.toArray(new String[0]));
+    }//GEN-LAST:event_chkGenderMaleActionPerformed
+
+    private void chkIncomeBelow20KActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkIncomeBelow20KActionPerformed
+        if (chkIncomeBelow20K.isSelected()) {
+            this.globalFilter.add(chkIncomeBelow20K.getText());
+        } else {
+            this.globalFilter.remove(chkIncomeBelow20K.getText());
+        }
+        
+        this.updateClientList(globalFilter.toArray(new String[0]));
+    }//GEN-LAST:event_chkIncomeBelow20KActionPerformed
+
+    private void chkGenderOtherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkGenderOtherActionPerformed
+        if (chkGenderOther.isSelected()) {
+            this.globalFilter.add(chkGenderOther.getText());
+        } else {
+            this.globalFilter.remove(chkGenderOther.getText());
+        }
+        
+        this.updateClientList(globalFilter.toArray(new String[0]));
+    }//GEN-LAST:event_chkGenderOtherActionPerformed
+
+    private void chkIncome20Kto40KActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkIncome20Kto40KActionPerformed
+        if (chkIncome20Kto40K.isSelected()) {
+            this.globalFilter.add(chkIncome20Kto40K.getText());
+        } else {
+            this.globalFilter.remove(chkIncome20Kto40K.getText());
+        }
+        
+        this.updateClientList(globalFilter.toArray(new String[0]));
+    }//GEN-LAST:event_chkIncome20Kto40KActionPerformed
+
+    private void chkIncome40Kto60KActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkIncome40Kto60KActionPerformed
+        if (chkIncome40Kto60K.isSelected()) {
+            this.globalFilter.add(chkIncome40Kto60K.getText());
+        } else {
+            this.globalFilter.remove(chkIncome40Kto60K.getText());
+        }
+        
+        this.updateClientList(globalFilter.toArray(new String[0]));
+    }//GEN-LAST:event_chkIncome40Kto60KActionPerformed
+
+    private void chkIncome60Kto80KActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkIncome60Kto80KActionPerformed
+        if (chkIncome60Kto80K.isSelected()) {
+            this.globalFilter.add(chkIncome60Kto80K.getText());
+        } else {
+            this.globalFilter.remove(chkIncome60Kto80K.getText());
+        }
+        
+        this.updateClientList(globalFilter.toArray(new String[0]));
+    }//GEN-LAST:event_chkIncome60Kto80KActionPerformed
+
+    private void chkIncomeAbove80KActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkIncomeAbove80KActionPerformed
+        if (chkIncomeAbove80K.isSelected()) {
+            this.globalFilter.add(chkIncomeAbove80K.getText());
+        } else {
+            this.globalFilter.remove(chkIncomeAbove80K.getText());
+        }
+        
+        this.updateClientList(globalFilter.toArray(new String[0]));
+    }//GEN-LAST:event_chkIncomeAbove80KActionPerformed
+
+    private void chkAgeBelow20ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkAgeBelow20ActionPerformed
+        if (chkAgeBelow20.isSelected()) {
+            this.globalFilter.add(chkAgeBelow20.getText());
+        } else {
+            this.globalFilter.remove(chkAgeBelow20.getText());
+        }
+        
+        this.updateClientList(globalFilter.toArray(new String[0]));
+    }//GEN-LAST:event_chkAgeBelow20ActionPerformed
+
+    private void chkAge20to40ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkAge20to40ActionPerformed
+        if (chkAge20to40.isSelected()) {
+            this.globalFilter.add(chkAge20to40.getText());
+        } else {
+            this.globalFilter.remove(chkAge20to40.getText());
+        }
+        
+        this.updateClientList(globalFilter.toArray(new String[0]));
+    }//GEN-LAST:event_chkAge20to40ActionPerformed
+
+    private void chkAge40to60ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkAge40to60ActionPerformed
+        if (chkAge40to60.isSelected()) {
+            this.globalFilter.add(chkAge40to60.getText());
+        } else {
+            this.globalFilter.remove(chkAge40to60.getText());
+        }
+        
+        this.updateClientList(globalFilter.toArray(new String[0]));
+    }//GEN-LAST:event_chkAge40to60ActionPerformed
+
+    private void chkAgeAbove60ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkAgeAbove60ActionPerformed
+        if (chkAgeAbove60.isSelected()) {
+            this.globalFilter.add(chkAgeAbove60.getText());
+        } else {
+            this.globalFilter.remove(chkAgeAbove60.getText());
+        }
+        
+        this.updateClientList(globalFilter.toArray(new String[0]));
+    }//GEN-LAST:event_chkAgeAbove60ActionPerformed
+
+    private void chkMaritalSingleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkMaritalSingleActionPerformed
+        if (chkMaritalSingle.isSelected()) {
+            this.globalFilter.add(chkMaritalSingle.getText());
+        } else {
+            this.globalFilter.remove(chkMaritalSingle.getText());
+        }
+        
+        this.updateClientList(globalFilter.toArray(new String[0]));
+    }//GEN-LAST:event_chkMaritalSingleActionPerformed
+
+    private void chkMaritalMarriedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkMaritalMarriedActionPerformed
+        if (chkMaritalMarried.isSelected()) {
+            this.globalFilter.add(chkMaritalMarried.getText());
+        } else {
+            this.globalFilter.remove(chkMaritalMarried.getText());
+        }
+        
+        this.updateClientList(globalFilter.toArray(new String[0]));
+    }//GEN-LAST:event_chkMaritalMarriedActionPerformed
+
+    private void chkMaritalDivorcedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkMaritalDivorcedActionPerformed
+        if (chkMaritalDivorced.isSelected()) {
+            this.globalFilter.add(chkMaritalDivorced.getText());
+        } else {
+            this.globalFilter.remove(chkMaritalDivorced.getText());
+        }
+        
+        this.updateClientList(globalFilter.toArray(new String[0]));
+    }//GEN-LAST:event_chkMaritalDivorcedActionPerformed
+
+    private void chkMaritalWidowedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkMaritalWidowedActionPerformed
+        if (chkMaritalWidowed.isSelected()) {
+            this.globalFilter.add(chkMaritalWidowed.getText());
+        } else {
+            this.globalFilter.remove(chkMaritalWidowed.getText());
+        }
+        
+        this.updateClientList(globalFilter.toArray(new String[0]));
+    }//GEN-LAST:event_chkMaritalWidowedActionPerformed
+
+    private void chkMaritalCommonLawActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkMaritalCommonLawActionPerformed
+        if (chkMaritalCommonLaw.isSelected()) {
+            this.globalFilter.add(chkMaritalCommonLaw.getText());
+        } else {
+            this.globalFilter.remove(chkMaritalCommonLaw.getText());
+        }
+        
+        this.updateClientList(globalFilter.toArray(new String[0]));
+    }//GEN-LAST:event_chkMaritalCommonLawActionPerformed
+
+    private void lblLastSyncMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblLastSyncMouseClicked
+        this.pnlLoadingFiles.setVisible(true);
+    }//GEN-LAST:event_lblLastSyncMouseClicked
+
+    private void pnlImporting3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlImporting3MouseClicked
+        this.pnlImporting3.setVisible(false);
+        new NewDocument(this, true, "RunAway Life Advantage", "Insurance", "Momentum Canada, Inc.").setVisible(true);
+    }//GEN-LAST:event_pnlImporting3MouseClicked
+
+    private void pnlImporting2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlImporting2MouseClicked
+        this.pnlImporting2.setVisible(false);
+        new NewDocument(this, true, "HealthCheck+ Critical Illness", "Insurance", "Sammy Beast Corp.").setVisible(true);
+    }//GEN-LAST:event_pnlImporting2MouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEditClient;
     private javax.swing.JButton btnFilterClients;
+    private javax.swing.JButton btnHideFilter;
     private javax.swing.JButton btnNewClient;
     private javax.swing.JButton btnNewDocument;
     private javax.swing.JButton btnSync;
+    private javax.swing.JCheckBox chkAge20to40;
+    private javax.swing.JCheckBox chkAge40to60;
+    private javax.swing.JCheckBox chkAgeAbove60;
+    private javax.swing.JCheckBox chkAgeBelow20;
+    private javax.swing.JCheckBox chkGenderFemale;
+    private javax.swing.JCheckBox chkGenderMale;
+    private javax.swing.JCheckBox chkGenderOther;
+    private javax.swing.JCheckBox chkIncome20Kto40K;
+    private javax.swing.JCheckBox chkIncome40Kto60K;
+    private javax.swing.JCheckBox chkIncome60Kto80K;
+    private javax.swing.JCheckBox chkIncomeAbove80K;
+    private javax.swing.JCheckBox chkIncomeBelow20K;
+    private javax.swing.JCheckBox chkMaritalCommonLaw;
+    private javax.swing.JCheckBox chkMaritalDivorced;
+    private javax.swing.JCheckBox chkMaritalMarried;
+    private javax.swing.JCheckBox chkMaritalSingle;
+    private javax.swing.JCheckBox chkMaritalWidowed;
     private javax.swing.JComboBox comboSortType;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JDialog dlgFilterType;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JSeparator jSeparator4;
+    private javax.swing.JSeparator jSeparator5;
     private javax.swing.JLabel lblClientName;
     private javax.swing.JLabel lblClientSince;
+    private javax.swing.JLabel lblDocumentName;
+    private javax.swing.JLabel lblDocumentName1;
+    private javax.swing.JLabel lblDocumentName2;
+    private javax.swing.JLabel lblLastSync;
     private javax.swing.JList lstClientList;
     private javax.swing.JPanel pnlClientInfo;
     private javax.swing.JPanel pnlDocumentList;
     private javax.swing.JPanel pnlDocumentView;
+    private javax.swing.JPanel pnlFilter;
+    private javax.swing.JPanel pnlImporting1;
+    private javax.swing.JPanel pnlImporting2;
+    private javax.swing.JPanel pnlImporting3;
     private javax.swing.JPanel pnlLoadingFiles;
     private javax.swing.JScrollPane scrpnlClientList;
     private javax.swing.JScrollPane scrpnlDocumentView;

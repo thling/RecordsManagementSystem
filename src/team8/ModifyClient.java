@@ -9,13 +9,39 @@ package team8;
  * @author sam
  */
 public class ModifyClient extends javax.swing.JDialog {
-
+    Client client;
+    
     /**
      * Creates new form ModifyClient
      */
     public ModifyClient(java.awt.Frame parent, boolean modal, Client c) {
         super(parent, modal);
         initComponents();
+        this.lblName.setText(c.getName());
+        this.comboAge.setSelectedItem(c.getAge());
+        this.comboDependents.setSelectedItem(c.getDependents());
+        this.comboEmployment.setSelectedItem(c.getEmployment());
+        this.comboGender.setSelectedItem(c.getGender());
+        this.comboIncome.setSelectedItem(c.getIncome());
+        this.comboMarital.setSelectedItem(c.getMarital());
+        
+        this.setTitle("Modify Client - " + c.getName());
+        this.client = c;
+        
+        Util.setFrameInMiddle(this);
+    }
+    
+    private void checkInformationSuffice() {
+        if( !this.comboAge.getSelectedItem().equals("Age")
+                && !this.comboDependents.getSelectedItem().equals("Dependents")
+                && !this.comboEmployment.getSelectedItem().equals("Employment")
+                && !this.comboGender.getSelectedItem().equals("Gender")
+                && !this.comboIncome.getSelectedItem().equals("Income")
+                && !this.comboMarital.getSelectedItem().equals("Marital")) {
+            this.btnSubmit.setEnabled(true);
+        } else {
+            this.btnSubmit.setEnabled(false);
+        }
     }
 
     /**
@@ -41,25 +67,66 @@ public class ModifyClient extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         comboEmployment.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Employment", "Employeed", "Unemployeed" }));
+        comboEmployment.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboEmploymentActionPerformed(evt);
+            }
+        });
 
         btnCustomize.setText("Customize");
 
         comboDependents.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Dependents", "Yes", "No" }));
+        comboDependents.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboDependentsActionPerformed(evt);
+            }
+        });
 
         comboGender.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Gender", "Male", "Female", "Other" }));
+        comboGender.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboGenderActionPerformed(evt);
+            }
+        });
 
         lblName.setFont(new java.awt.Font("Ubuntu", 1, 22)); // NOI18N
         lblName.setText("jLabel1");
 
         btnCancel.setText("Cancel");
+        btnCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelActionPerformed(evt);
+            }
+        });
 
         btnSubmit.setText("Submit");
+        btnSubmit.setEnabled(false);
+        btnSubmit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSubmitActionPerformed(evt);
+            }
+        });
 
         comboMarital.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Marital", "Single", "Married", "Widowed", "Divorced", "Common Law" }));
+        comboMarital.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboMaritalActionPerformed(evt);
+            }
+        });
 
         comboAge.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Age", "Below 20", "20 to 40", "40 to 60", "Above 60", "Other" }));
+        comboAge.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboAgeActionPerformed(evt);
+            }
+        });
 
         comboIncome.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Income", "Below 20K", "20K to 40K", "40K to 60K", "60K to 80K", "Above 80K" }));
+        comboIncome.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboIncomeActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -121,6 +188,47 @@ public class ModifyClient extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btnCancelActionPerformed
+
+    private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
+        this.client.setAge((String)this.comboAge.getSelectedItem());
+        this.client.setDependents((String)this.comboDependents.getSelectedItem());
+        this.client.setEmployment((String)this.comboEmployment.getSelectedItem());
+        this.client.setGender((String)this.comboGender.getSelectedItem());
+        this.client.setIncome((String)this.comboIncome.getSelectedItem());
+        this.client.setMarital((String)this.comboMarital.getSelectedItem());
+        
+        Dashboard.getInstance().updateClientPanel(this.client);
+        this.dispose();
+    }//GEN-LAST:event_btnSubmitActionPerformed
+
+    private void comboGenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboGenderActionPerformed
+        checkInformationSuffice();
+    }//GEN-LAST:event_comboGenderActionPerformed
+
+    private void comboAgeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboAgeActionPerformed
+        checkInformationSuffice();
+    }//GEN-LAST:event_comboAgeActionPerformed
+
+    private void comboDependentsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboDependentsActionPerformed
+        checkInformationSuffice();
+    }//GEN-LAST:event_comboDependentsActionPerformed
+
+    private void comboIncomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboIncomeActionPerformed
+        checkInformationSuffice();
+    }//GEN-LAST:event_comboIncomeActionPerformed
+
+    private void comboMaritalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboMaritalActionPerformed
+        checkInformationSuffice();
+    }//GEN-LAST:event_comboMaritalActionPerformed
+
+    private void comboEmploymentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboEmploymentActionPerformed
+        checkInformationSuffice();
+    }//GEN-LAST:event_comboEmploymentActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnCustomize;

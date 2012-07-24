@@ -69,6 +69,15 @@ public class Client {
         }
     }
     
+    /**
+     * Initialize using the variables
+     * @param n name
+     * @param s since
+     * @param g gender
+     * @param a age
+     * @param i income
+     * @param m marital status
+     */
     public Client(String n, String s, String g, String a, String i, String m) {
         this.name = n;
         this.since = s;
@@ -103,18 +112,10 @@ public class Client {
                 new Document("Momentum Bonds", "Oct 23, 2008", "Investment", "Momentum Canada, Inc."));
     }
     
-    /**
-     * Returns the name of the client
-     * @return Name of client
-     */
     public String getName() {
         return this.name;
     }
     
-    /**
-     * Updates the name of the client
-     * @param n Name to update to
-     */
     public void setName(String n) {
         this.name = n;
     }
@@ -133,6 +134,34 @@ public class Client {
     
     public String getMarital() {
         return this.marital;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
+    }
+
+    public void setDependents(String dependents) {
+        this.dependents = dependents;
+    }
+
+    public void setEmployment(String employment) {
+        this.employment = employment;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public void setIncome(String income) {
+        this.income = income;
+    }
+
+    public void setMarital(String marital) {
+        this.marital = marital;
+    }
+
+    public void setSince(String since) {
+        this.since = since;
     }
     
     public String getDependents() {

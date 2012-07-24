@@ -15,6 +15,8 @@ public class DocumentPanel extends javax.swing.JPanel {
 
     /**
      * Creates new form DocumentPanel
+     * 
+     * @param d a document associated with this panel
      */
     public DocumentPanel(Document d) {
         initComponents();
@@ -24,6 +26,10 @@ public class DocumentPanel extends javax.swing.JPanel {
         this.lblDateAdded.setText(d.getDateAdded());
     }
     
+    /**
+     * Returns the document that this panel displays
+     * @return Document object
+     */
     public Document getDocument() {
         return this.doc;
     }

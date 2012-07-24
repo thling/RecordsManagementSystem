@@ -16,10 +16,10 @@ import java.util.Date;
  */
 public class NewDocument extends javax.swing.JDialog {
     private boolean _has_init = false;
-    
     private boolean _txt_had_focus = false;
-    
+    private String docName = "Samuel Beasto Term Life";
     private final Object mutex = new Object();
+    
     /**
      * Creates new form NewDocument
      */
@@ -35,7 +35,16 @@ public class NewDocument extends javax.swing.JDialog {
         this.populateClientList(null);
     }
     
-    public NewDocument(java.awt.Frame parent, boolean modal, String docType, String docProvider) {
+    /**
+     * Initialize with parameters
+     * 
+     * @param parent owner of this dialog
+     * @param modal whether to block windows or not
+     * @param nm name of document
+     * @param docType type
+     * @param docProvider provider
+     */
+    public NewDocument(java.awt.Frame parent, boolean modal, String nm, String docType, String docProvider) {
         super(parent, modal);
         initComponents();
         addListeners();
@@ -46,6 +55,7 @@ public class NewDocument extends javax.swing.JDialog {
         
         this.comboProvider.setSelectedItem(docProvider);
         this.comboType.setSelectedItem(docType);
+        this.docName = nm;
         
         this.populateClientList(null);
     }
@@ -105,9 +115,16 @@ public class NewDocument extends javax.swing.JDialog {
         });
     }
 
+    /**
+     * Displays this dialog on screen
+     */
     public void display() {
         this._has_init = true;
         this.setVisible(true);
+    }
+    
+    public void setDocName(String nm) {
+        this.docName = nm;
     }
 
     private void populateClientList(String filter) {
@@ -139,6 +156,9 @@ public class NewDocument extends javax.swing.JDialog {
         this.scrpnlListClients.doLayout();
     }
 
+    /**
+     * Used to check whether the fields entered are enough
+     */
     private void checkInformationSuffice() {
         if (this.txtSearchClient.getText().length() != 0
                 && !this.comboAge.getSelectedItem().equals("Age")
@@ -554,7 +574,6 @@ public class NewDocument extends javax.swing.JDialog {
         Date date = new Date();
         
         if (c == null) {
-            
             c = new Client(
                     this.txtSearchClient.getText(),
                     dateFormat.format(date),
@@ -568,7 +587,7 @@ public class NewDocument extends javax.swing.JDialog {
             );
             
             c.addDocument(new Document(
-                    "TD Crazy Invest",
+                    this.docName,
                     dateFormat.format(date),
                     (String)this.comboType.getSelectedItem(),
                     (String)this.comboProvider.getSelectedItem(),
@@ -578,7 +597,7 @@ public class NewDocument extends javax.swing.JDialog {
             FakeDB.addClient(c);
         } else {
             FakeDB.addDocument(c.getName(), new Document(
-                    "Samuel Beasto Term Life",
+                    this.docName,
                     dateFormat.format(date),
                     (String)this.comboType.getSelectedItem(),
                     (String)this.comboProvider.getSelectedItem(),

@@ -15,6 +15,13 @@ public class Document {
     private String provider;
     private String notes;
     
+    /**
+     * Initialize with parameters
+     * @param n name of document
+     * @param d date added
+     * @param t type
+     * @param p provider
+     */
     public Document (String n, String d, String t, String p) {
         this.name = n;
         this.dateAdded = d;
@@ -23,6 +30,14 @@ public class Document {
         this.notes = "";
     }
     
+    /**
+     * Initialize with parameters
+     * @param n name of document
+     * @param d date added
+     * @param t type
+     * @param p provider
+     * @param nt additional notes
+     */
     public Document (String n, String d, String t, String p, String nt) {
         this.name = n;
         this.dateAdded = d;

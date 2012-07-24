@@ -24,6 +24,11 @@ public class DocumentView extends javax.swing.JPanel {
         this.txtAreaNotes.setText(d.getNotes());
     }
     
+    /**
+     * Returns the document that this viewer is displaying with
+     * 
+     * @return Document object
+     */
     public Document getDocument() {
         return this.document;
     }

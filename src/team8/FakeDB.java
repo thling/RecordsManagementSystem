@@ -91,6 +91,10 @@ public class FakeDB {
         clientList.put(nm, new Client(nm));
     }
     
+    /**
+     * Adds a new client
+     * @param c the client object to be added
+     */
     public static void addClient(Client c) {
         clientList.put(c.getName(),c);
     }
@@ -117,6 +121,8 @@ public class FakeDB {
         Document[] documents = dlist.values().toArray(new Document[0]);
         
         final String order = orderBy;
+        
+        // Custom comparator object to sort with
         Arrays.sort(documents, new Comparator(){
             @Override
             public int compare(Object a, Object b) {
@@ -159,7 +165,6 @@ public class FakeDB {
                 }
             }
         });
-        
         
         return documents;
     }
