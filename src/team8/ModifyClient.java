@@ -80,7 +80,7 @@ public class ModifyClient extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
 
-        comboEmployment.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Employment", "Employeed", "Unemployeed" }));
+        comboEmployment.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Employment", "Employed", "Unemployed", "Other" }));
         comboEmployment.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboEmploymentActionPerformed(evt);

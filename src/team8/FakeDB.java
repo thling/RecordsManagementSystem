@@ -19,17 +19,17 @@ public class FakeDB {
     private FakeDB() {
         clientList = new HashMap<>();
         
-        clientList.put("Emily Wang", new Client("Emily Wang", "Jul 27, 2009", "Female", "20 to 40", "20K to 40K", "Single"));
-        clientList.put("Brad Brain", new Client("Brad Brain", "May 02, 2007", "Male", "40 to 60", "40K to 60K", "Widowed"));
-        clientList.put("Bloody Marry", new Client("Bloody Marry", "Dec 12, 2011", "Female", "20 to 40", "60K to 80K", "Single"));
-        clientList.put("Catherine Crazikid", new Client("Catherine Crazikid", "Jan 01, 2000", "Female", "40 to 60", "Below 20K", "Divorced"));
-        clientList.put("Samuel Beasto", new Client("Samuel Beasto", "Nov 04, 2007", "Male", "Below 20", "Below 20K", "Single"));
-        clientList.put("Tee Bone", new Client("Tee Bone", "Jul 27, 2009", "Female", "20 to 40", "20K to 40K", "Single"));
-        clientList.put("Crash Sait", new Client("Crash Sait", "Jul 20, 2012", "Female", "20 to 40", "20K to 40K", "Married"));
-        clientList.put("Brownie Ploany", new Client("Brownie Ploany", "Oct 07, 2005", "Female", "20 to 40", "20K to 40K", "Single"));
-        clientList.put("Tim Hortons", new Client("Tim Hortons", "Jul 23, 2002", "Female", "20 to 40", "20K to 40K", "Single"));
-        clientList.put("Betty Barbie", new Client("Betty Barbie", "Jun 19, 2003", "Female", "20 to 40", "60K to 80K", "Married"));
-        clientList.put("Henry Oh", new Client("Henry Oh", "Aug 08, 2011", "Male", "20 to 40", "Above 80K", "Single"));
+        clientList.put("Emily Wang", new Client("Emily Wang", "Jul 27, 2009", "Female", "20 to 40", "20K to 40K", "Married"));
+        clientList.put("Brad Pitt", new Client("Brad Pitt", "May 02, 2007", "Male", "40 to 60", "40K to 60K", "Widowed"));
+        clientList.put("James Bond", new Client("James Bond", "Dec 12, 2011", "Male", "20 to 40", "60K to 80K", "Single"));
+        clientList.put("Angelina Jolie", new Client("Angelina Jolie", "Jan 01, 2000", "Female", "40 to 60", "Above 80K", "Divorced"));
+        clientList.put("Sam Ling", new Client("Sam Ling", "Nov 04, 2007", "Male", "20 to 40", "Below 20K", "Single"));
+        clientList.put("Frank Wang", new Client("Frank Wang", "Jul 27, 2009", "Male", "20 to 40", "20K to 40K", "Married"));
+        clientList.put("Marina Zhao", new Client("Marina Zhao", "Jul 20, 2012", "Female", "20 to 40", "20K to 40K", "Single"));
+        clientList.put("Michael Vallis", new Client("Michael Vallis", "Oct 07, 2005", "Male", "20 to 40", "20K to 40K", "Single"));
+        clientList.put("Tim Hortons", new Client("Tim Hortons", "Jul 23, 2002", "Male", "40 to 60", "20K to 40K", "Single"));
+        clientList.put("Natalie Portman", new Client("Natalie Portman", "Jun 19, 2003", "Female", "20 to 40", "60K to 80K", "Married"));
+        clientList.put("George Clooney", new Client("George Clooney", "Aug 08, 2011", "Male", "20 to 40", "Above 80K", "Single"));
     }
     
     /**

@@ -45,7 +45,7 @@ public class Client {
         this.dependents = "No";
         this.income = "Below 20K";
         this.marital = "Single";
-        this.employment = "Unemployeed";
+        this.employment = "Unemployed";
         
         this.documents = new HashMap<>();
         this.fillDocumentList();
@@ -97,7 +97,7 @@ public class Client {
         this.income = i;
         this.marital = m;
         this.dependents = "No";
-        this.employment = "Unemployeed";
+        this.employment = "Unemployed";
         
         this.documents = new HashMap<>();
         this.fillDocumentList();
@@ -111,13 +111,13 @@ public class Client {
                 new Document("DEF Mutual Fund", "Nov 01, 2010", "Investment", "DEF Group"));
         
         this.documents.put("TD Waterhouse",
-                new Document("TD Crazy Fund", "Aug 13, 2012", "Investment", "TD Waterhouse"));
+                new Document("TD Fund", "Aug 13, 2012", "Investment", "TD Waterhouse"));
         
         this.documents.put("Sammy Segfunds",
                 new Document("Sammy Segfunds", "Feb 14, 2011", "Investment", "Sammy Beast Corp."));
         
-        this.documents.put("Ahaha Critical Illness", 
-                new Document("Ahaha Critical Illness", "Apr 30, 2008", "Insurance", "Ahaha Foundation"));
+        this.documents.put("Canadian Critical Illness", 
+                new Document("Canadian Critical Illness", "Apr 30, 2008", "Insurance", "CPP Foundation"));
         
         this.documents.put("Momentum Bonds",
                 new Document("Momentum Bonds", "Oct 23, 2008", "Investment", "Momentum Canada, Inc."));
