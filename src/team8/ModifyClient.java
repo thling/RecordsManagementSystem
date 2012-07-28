@@ -10,23 +10,31 @@ package team8;
  */
 public class ModifyClient extends javax.swing.JDialog {
     Client client;
+    String oldName = null;
     
     /**
      * Creates new form ModifyClient
      */
-    public ModifyClient(java.awt.Frame parent, boolean modal, Client c) {
+    public ModifyClient(java.awt.Frame parent, boolean modal, Client c, boolean add) {
         super(parent, modal);
         initComponents();
-        this.lblName.setText(c.getName());
-        this.comboAge.setSelectedItem(c.getAge());
-        this.comboDependents.setSelectedItem(c.getDependents());
-        this.comboEmployment.setSelectedItem(c.getEmployment());
-        this.comboGender.setSelectedItem(c.getGender());
-        this.comboIncome.setSelectedItem(c.getIncome());
-        this.comboMarital.setSelectedItem(c.getMarital());
         
-        this.setTitle("Modify Client - " + c.getName());
-        this.client = c;
+        if (!add) {
+            this.txtName.setText(c.getName());
+            this.oldName = c.getName();
+            
+            this.comboAge.setSelectedItem(c.getAge());
+            this.comboDependents.setSelectedItem(c.getDependents());
+            this.comboEmployment.setSelectedItem(c.getEmployment());
+            this.comboGender.setSelectedItem(c.getGender());
+            this.comboIncome.setSelectedItem(c.getIncome());
+            this.comboMarital.setSelectedItem(c.getMarital());
+
+            this.setTitle("Modify Client - " + c.getName());
+            this.client = c;
+        } else {
+            
+        }
         
         Util.setFrameInMiddle(this);
     }
@@ -37,7 +45,9 @@ public class ModifyClient extends javax.swing.JDialog {
                 && !this.comboEmployment.getSelectedItem().equals("Employment")
                 && !this.comboGender.getSelectedItem().equals("Gender")
                 && !this.comboIncome.getSelectedItem().equals("Income")
-                && !this.comboMarital.getSelectedItem().equals("Marital")) {
+                && !this.comboMarital.getSelectedItem().equals("Marital")
+                && this.txtName.getText().length() != 0) {
+            
             this.btnSubmit.setEnabled(true);
         } else {
             this.btnSubmit.setEnabled(false);
@@ -57,14 +67,18 @@ public class ModifyClient extends javax.swing.JDialog {
         btnCustomize = new javax.swing.JButton();
         comboDependents = new javax.swing.JComboBox();
         comboGender = new javax.swing.JComboBox();
-        lblName = new javax.swing.JLabel();
         btnCancel = new javax.swing.JButton();
         btnSubmit = new javax.swing.JButton();
         comboMarital = new javax.swing.JComboBox();
         comboAge = new javax.swing.JComboBox();
         comboIncome = new javax.swing.JComboBox();
+        txtName = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setResizable(false);
 
         comboEmployment.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Employment", "Employeed", "Unemployeed" }));
         comboEmployment.addActionListener(new java.awt.event.ActionListener() {
@@ -88,9 +102,6 @@ public class ModifyClient extends javax.swing.JDialog {
                 comboGenderActionPerformed(evt);
             }
         });
-
-        lblName.setFont(new java.awt.Font("Ubuntu", 1, 22)); // NOI18N
-        lblName.setText("jLabel1");
 
         btnCancel.setText("Cancel");
         btnCancel.addActionListener(new java.awt.event.ActionListener() {
@@ -128,6 +139,18 @@ public class ModifyClient extends javax.swing.JDialog {
             }
         });
 
+        txtName.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtNameFocusLost(evt);
+            }
+        });
+
+        jLabel1.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
+        jLabel1.setText("Client Name");
+
+        jLabel2.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
+        jLabel2.setText("Details");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -135,41 +158,49 @@ public class ModifyClient extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSeparator1)
+                    .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblName)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnCustomize))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(comboIncome, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(comboGender, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(comboAge, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(comboDependents, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(comboMarital, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(comboEmployment, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(btnCancel)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnSubmit)))))
+                        .addComponent(btnCancel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnSubmit))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                            .addComponent(jLabel2)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnCustomize))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(comboIncome, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(comboGender, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGap(18, 18, 18)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(comboAge, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(comboDependents, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(comboMarital, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(comboEmployment, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE))))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblName)
-                    .addComponent(btnCustomize))
-                .addGap(18, 18, 18)
+                    .addComponent(btnCustomize)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(comboGender, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(comboAge, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -179,7 +210,7 @@ public class ModifyClient extends javax.swing.JDialog {
                     .addComponent(comboIncome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(comboMarital, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(comboEmployment, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSubmit)
                     .addComponent(btnCancel))
@@ -194,14 +225,24 @@ public class ModifyClient extends javax.swing.JDialog {
     }//GEN-LAST:event_btnCancelActionPerformed
 
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
-        this.client.setAge((String)this.comboAge.getSelectedItem());
-        this.client.setDependents((String)this.comboDependents.getSelectedItem());
-        this.client.setEmployment((String)this.comboEmployment.getSelectedItem());
-        this.client.setGender((String)this.comboGender.getSelectedItem());
-        this.client.setIncome((String)this.comboIncome.getSelectedItem());
-        this.client.setMarital((String)this.comboMarital.getSelectedItem());
+        Client update = new Client();
         
-        Dashboard.getInstance().updateClientPanel(this.client);
+        update.setName(this.txtName.getText());  
+        update.setAge((String)this.comboAge.getSelectedItem());
+        update.setDependents((String)this.comboDependents.getSelectedItem());
+        update.setEmployment((String)this.comboEmployment.getSelectedItem());
+        update.setGender((String)this.comboGender.getSelectedItem());
+        update.setIncome((String)this.comboIncome.getSelectedItem());
+        update.setMarital((String)this.comboMarital.getSelectedItem());
+        
+        if (this.oldName != null) {
+            FakeDB.updateClient(this.oldName, update);
+            Dashboard.getInstance().updateClientPanel(update);
+        } else {
+            FakeDB.addClient(update);
+        }
+        
+        Dashboard.getInstance().updateClientList();
         this.dispose();
     }//GEN-LAST:event_btnSubmitActionPerformed
 
@@ -229,6 +270,18 @@ public class ModifyClient extends javax.swing.JDialog {
         checkInformationSuffice();
     }//GEN-LAST:event_comboEmploymentActionPerformed
 
+    private void txtNameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtNameFocusLost
+        String input = this.txtName.getText();
+        String[] s = input.split(" ");
+
+        input = "";
+        for (int i = 0; i < s.length; i++) {
+            input = input + s[i].substring(0,1).toUpperCase() + s[i].substring(1).toLowerCase() + " ";
+        }
+        
+        this.txtName.setText(input.trim());
+    }//GEN-LAST:event_txtNameFocusLost
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnCustomize;
@@ -239,6 +292,9 @@ public class ModifyClient extends javax.swing.JDialog {
     private javax.swing.JComboBox comboGender;
     private javax.swing.JComboBox comboIncome;
     private javax.swing.JComboBox comboMarital;
-    private javax.swing.JLabel lblName;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JTextField txtName;
     // End of variables declaration//GEN-END:variables
 }

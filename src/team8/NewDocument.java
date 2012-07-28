@@ -4,6 +4,7 @@
  */
 package team8;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.*;
 import java.text.DateFormat;
@@ -276,7 +277,10 @@ public class NewDocument extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Add New Document");
 
+        btnViewFullsizedDocument.setBackground(new java.awt.Color(254, 254, 254));
+        btnViewFullsizedDocument.setIcon(new javax.swing.ImageIcon(getClass().getResource("/team8/image/zoom.png"))); // NOI18N
         btnViewFullsizedDocument.setText("View Fullsized Document");
+        btnViewFullsizedDocument.setOpaque(true);
 
         lblClientInfo.setText("Client Information");
 
@@ -389,7 +393,7 @@ public class NewDocument extends javax.swing.JDialog {
                         .addComponent(comboAge, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(comboDependents, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnCustomizeClientAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(comboType, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)

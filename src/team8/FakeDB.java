@@ -100,6 +100,23 @@ public class FakeDB {
     }
     
     /**
+     * Updates a client
+     * @param name
+     * @param c 
+     */
+    public static void updateClient(String name, Client c) {
+        if (clientList.containsKey(name)) {
+            Document[] d = getDocumentsByClient(name, "Name");
+            for (int i = 0; i < d.length; i++) {
+                c.addDocument(d[i]);
+            }
+            
+            clientList.remove(name);
+            addClient(c);
+        }
+    }
+    
+    /**
      * Returns sorted array
      * 
      * @param name name of client

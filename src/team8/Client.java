@@ -4,6 +4,9 @@
  */
 package team8;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -20,6 +23,14 @@ public class Client {
     private String income;
     private String marital;
     private String employment;
+    
+    public Client() {
+        DateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
+        Date date = new Date();
+        
+        this.since = dateFormat.format(date);
+        this.documents = new HashMap<>();
+    }
     
     /**
      * Constructor

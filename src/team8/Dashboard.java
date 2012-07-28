@@ -641,7 +641,7 @@ public class Dashboard extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tabActiveLayout.createSequentialGroup()
                 .addComponent(txtSearchClient, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrpnlClientList, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
+                .addComponent(scrpnlClientList, javax.swing.GroupLayout.DEFAULT_SIZE, 452, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnFilterClients))
         );
@@ -656,7 +656,7 @@ public class Dashboard extends javax.swing.JFrame {
         );
         tabInactiveLayout.setVerticalGroup(
             tabInactiveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 506, Short.MAX_VALUE)
+            .addGap(0, 518, Short.MAX_VALUE)
         );
 
         tabpnlClients.addTab("Inactive Clients", tabInactive);
@@ -681,10 +681,7 @@ public class Dashboard extends javax.swing.JFrame {
         );
         pnlImporting1Layout.setVerticalGroup(
             pnlImporting1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlImporting1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblDocumentName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(lblDocumentName, javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE)
         );
 
         pnlImporting2.setBackground(new java.awt.Color(220, 254, 214));
@@ -711,10 +708,7 @@ public class Dashboard extends javax.swing.JFrame {
         );
         pnlImporting2Layout.setVerticalGroup(
             pnlImporting2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlImporting2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblDocumentName1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(lblDocumentName1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pnlImporting3.setBackground(new java.awt.Color(220, 254, 214));
@@ -742,10 +736,7 @@ public class Dashboard extends javax.swing.JFrame {
         );
         pnlImporting3Layout.setVerticalGroup(
             pnlImporting3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlImporting3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblDocumentName2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(lblDocumentName2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout pnlLoadingFilesLayout = new javax.swing.GroupLayout(pnlLoadingFiles);
@@ -775,14 +766,28 @@ public class Dashboard extends javax.swing.JFrame {
         });
 
         btnSync.setBackground(new java.awt.Color(254, 254, 254));
-        btnSync.setForeground(new java.awt.Color(254, 254, 254));
-        btnSync.setIcon(new javax.swing.ImageIcon(getClass().getResource("/team8/image/sync icon.png"))); // NOI18N
+        btnSync.setForeground(new java.awt.Color(1, 1, 1));
+        btnSync.setIcon(new javax.swing.ImageIcon(getClass().getResource("/team8/image/sync.png"))); // NOI18N
+        btnSync.setText("Sync");
+        btnSync.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSync.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
 
         jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
-        btnNewClient.setIcon(new javax.swing.ImageIcon(getClass().getResource("/team8/image/client icon.png"))); // NOI18N
+        btnNewClient.setIcon(new javax.swing.ImageIcon(getClass().getResource("/team8/image/new_contact.png"))); // NOI18N
+        btnNewClient.setText("New Client");
+        btnNewClient.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnNewClient.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnNewClient.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNewClientActionPerformed(evt);
+            }
+        });
 
-        btnNewDocument.setIcon(new javax.swing.ImageIcon(getClass().getResource("/team8/image/document icon.png"))); // NOI18N
+        btnNewDocument.setIcon(new javax.swing.ImageIcon(getClass().getResource("/team8/image/new_document.png"))); // NOI18N
+        btnNewDocument.setText("New Doc");
+        btnNewDocument.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnNewDocument.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnNewDocument.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnNewDocumentActionPerformed(evt);
@@ -802,13 +807,13 @@ public class Dashboard extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(btnSync, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnSync, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnNewClient)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnNewDocument)
+                .addComponent(btnNewDocument, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -816,15 +821,15 @@ public class Dashboard extends javax.swing.JFrame {
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnSync, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jSeparator1)
             .addComponent(btnNewClient, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnNewDocument, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+            .addComponent(jSeparator2)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtSearchDocument)
                 .addContainerGap())
-            .addComponent(jSeparator2)
+            .addComponent(btnSync, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pnlDocumentList.setBackground(new java.awt.Color(254, 254, 254));
@@ -879,7 +884,10 @@ public class Dashboard extends javax.swing.JFrame {
 
         lblClientSince.setText("jLabel3");
 
+        btnEditClient.setIcon(new javax.swing.ImageIcon(getClass().getResource("/team8/image/edit.png"))); // NOI18N
         btnEditClient.setText("Edit");
+        btnEditClient.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnEditClient.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnEditClient.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEditClientActionPerformed(evt);
@@ -907,7 +915,12 @@ public class Dashboard extends javax.swing.JFrame {
         pnlClientInfoLayout.setHorizontalGroup(
             pnlClientInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlClientInfoLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(pnlClientInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlClientInfoLayout.createSequentialGroup()
+                        .addComponent(lblClientName)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblClientSince))
                     .addGroup(pnlClientInfoLayout.createSequentialGroup()
                         .addComponent(txtGender, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -915,29 +928,25 @@ public class Dashboard extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtIncome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtMarital, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(pnlClientInfoLayout.createSequentialGroup()
-                        .addComponent(lblClientName)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblClientSince)))
+                        .addComponent(txtMarital, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnEditClient, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(btnEditClient, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         pnlClientInfoLayout.setVerticalGroup(
             pnlClientInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlClientInfoLayout.createSequentialGroup()
-                .addGroup(pnlClientInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblClientName)
-                    .addComponent(lblClientSince))
-                .addContainerGap(27, Short.MAX_VALUE))
             .addComponent(btnEditClient, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlClientInfoLayout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addGroup(pnlClientInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblClientName)
+                    .addComponent(lblClientSince))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlClientInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtGender, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtAge, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtIncome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtMarital, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(txtMarital, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(6, 6, 6))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -976,7 +985,7 @@ public class Dashboard extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(pnlClientInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(pnlClientInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -1079,7 +1088,7 @@ public class Dashboard extends javax.swing.JFrame {
             return;
         }
         
-        new ModifyClient(this, true, c).setVisible(true);
+        new ModifyClient(this, true, c, false).setVisible(true);
     }//GEN-LAST:event_btnEditClientActionPerformed
 
     private void btnFilterClientsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFilterClientsActionPerformed
@@ -1300,6 +1309,10 @@ public class Dashboard extends javax.swing.JFrame {
         this.pnlImporting2.setVisible(false);
         new NewDocument(this, true, "HealthCheck+ Critical Illness", "Insurance", "Sammy Beast Corp.").setVisible(true);
     }//GEN-LAST:event_pnlImporting2MouseClicked
+
+    private void btnNewClientActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewClientActionPerformed
+        new ModifyClient(this, true, null, true).setVisible(true);
+    }//GEN-LAST:event_btnNewClientActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEditClient;
