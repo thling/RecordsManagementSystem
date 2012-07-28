@@ -33,7 +33,7 @@ public class ModifyClient extends javax.swing.JDialog {
             this.setTitle("Modify Client - " + c.getName());
             this.client = c;
         } else {
-            
+            this.setTitle("New Client");
         }
         
         Util.setFrameInMiddle(this);
@@ -272,6 +272,10 @@ public class ModifyClient extends javax.swing.JDialog {
 
     private void txtNameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtNameFocusLost
         String input = this.txtName.getText();
+        if (input.length() == 0) {
+            return;
+        }
+        
         String[] s = input.split(" ");
 
         input = "";

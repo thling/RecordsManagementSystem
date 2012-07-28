@@ -23,7 +23,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jSeparator1" alignment="1" max="32767" attributes="0"/>
-                          <Component id="jScrollPane1" alignment="0" pref="297" max="32767" attributes="0"/>
+                          <Component id="jScrollPane1" alignment="0" pref="258" max="32767" attributes="0"/>
                           <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
                           <Group type="102" alignment="1" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -109,7 +109,7 @@
     <Component class="javax.swing.JLabel" name="lblDocumentName">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-          <Font name="Ubuntu" size="18" style="1"/>
+          <Font name="Ubuntu" size="16" style="1"/>
         </Property>
         <Property name="text" type="java.lang.String" value="jLabel1"/>
       </Properties>
