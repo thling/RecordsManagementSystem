@@ -9,7 +9,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 
 /**
- * Misc functions
+ * Misc functions.
  * 
  * @author sam
  */
